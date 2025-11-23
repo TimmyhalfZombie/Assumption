@@ -1,6 +1,11 @@
 import CrestLogo from './CrestLogo'
 
-const NavigationBar = () => {
+type NavigationBarProps = {
+  onLoginClick: () => void
+  ctaLabel?: string
+}
+
+const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account' }: NavigationBarProps) => {
   return (
     <header className="navigation-bar">
       <div className="navigation-bar__brand">
@@ -30,9 +35,9 @@ const NavigationBar = () => {
           </li>
         </ul>
       </nav>
-      <a className="navigation-bar__login" href="#">
-        Log into your account
-      </a>
+      <button className="navigation-bar__login" type="button" onClick={onLoginClick}>
+        {ctaLabel}
+      </button>
     </header>
   )
 }

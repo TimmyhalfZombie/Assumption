@@ -1,7 +1,12 @@
+import { useEffect } from 'react'
 import NavigationBar from './components/NavigationBar'
 import LibraryHero from './components/LibraryHero'
 import SearchForm from './components/SearchForm'
+import LoginModal from './components/LoginModal'
+import SignupScreen from './components/SignupScreen'
 import { useLibrarySearch } from './functions/useLibrarySearch'
+import { useLoginModal } from './functions/useLoginModal'
+import { useSignupForm } from './functions/useSignupForm'
 
 const LibraryScreen = () => {
   const {
@@ -15,10 +20,75 @@ const LibraryScreen = () => {
     setSelectedLibrary,
     handleSubmit,
   } = useLibrarySearch()
+  const {
+    isLoginOpen,
+    isSignupOpen,
+    account,
+    password,
+    isSubmitting,
+    openLogin,
+    closeLogin,
+    openSignup,
+    closeSignup,
+    handleAccountChange,
+    handlePasswordChange,
+    handleLoginSubmit,
+  } = useLoginModal()
+  const {
+    values: signupValues,
+    isSubmitting: signupSubmitting,
+    isPasswordMismatch,
+    updateValue,
+    submitForm: submitSignup,
+    resetForm,
+  } = useSignupForm()
+
+  const handleSignupClose = () => {
+    closeSignup()
+    resetForm()
+  }
+
+  const handleSignupSubmit = async () => {
+    const createdAccount = signupValues.email
+    await submitSignup()
+    handleSignupClose()
+    if (createdAccount) {
+      handleAccountChange(createdAccount)
+    }
+    openLogin()
+  }
+
+  useEffect(() => {
+    if (isLoginOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isLoginOpen])
+
+  if (isSignupOpen) {
+    return (
+      <SignupScreen
+        values={signupValues}
+        isSubmitting={signupSubmitting}
+        isPasswordMismatch={isPasswordMismatch}
+        onChange={updateValue}
+        onSubmit={handleSignupSubmit}
+        onBackToLogin={() => {
+          handleSignupClose()
+          openLogin()
+        }}
+      />
+    )
+  }
 
   return (
     <div className="library-screen">
-      <NavigationBar />
+      <NavigationBar onLoginClick={openLogin} />
       <main className="library-screen__content">
         <LibraryHero />
         <section className="library-screen__search">
@@ -48,6 +118,17 @@ const LibraryScreen = () => {
           <p>Featured titles will appear here.</p>
         </section>
       </main>
+      <LoginModal
+        isOpen={isLoginOpen}
+        account={account}
+        password={password}
+        isSubmitting={isSubmitting}
+        onAccountChange={handleAccountChange}
+        onPasswordChange={handlePasswordChange}
+        onClose={closeLogin}
+        onSubmit={handleLoginSubmit}
+        onCreateAccount={openSignup}
+      />
     </div>
   )
 }
