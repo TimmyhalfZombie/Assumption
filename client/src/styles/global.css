@@ -825,21 +825,57 @@ a {
 
 .signup-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   gap: 1.5rem;
   padding: clamp(1.5rem, 4vw, 2rem) clamp(1.5rem, 5vw, 3.5rem);
   background: #141428;
   color: #ffffff;
   border-bottom: 4px solid #f3d654;
   font-family: 'Afacad', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .signup-header__top {
-  width: 100%;
+  display: none; /* No longer needed, removed from structure */
+}
+
+.signup-header__actions {
   display: flex;
-  justify-content: center;
-  position: relative;
+  align-items: center;
+  gap: 2rem;
+}
+
+.signup-header__login {
+  position: static; /* Remove absolute positioning */
+  margin-left: 0;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: transparent; 
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-weight: 600;
+  font-family: 'Afacad', sans-serif;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.signup-header__login--desktop {
+  display: block;
+}
+
+.signup-header__login--mobile {
+  display: none;
+}
+
+.signup-header__menu-toggle {
+  display: none; /* Hidden on desktop */
+}
+
+.signup-header__login:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .signup-header__brand {
@@ -1103,7 +1139,7 @@ a {
     padding: 6rem 2rem 2rem;
     box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);
     transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
     z-index: 100;
     align-items: flex-start;
     gap: 1.5rem;
@@ -1114,6 +1150,7 @@ a {
   .signup-header__nav--open {
     transform: translateX(0);
     visibility: visible;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
   }
 
   /* Links inside the sidebar */
