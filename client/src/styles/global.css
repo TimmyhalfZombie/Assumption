@@ -918,6 +918,20 @@ a {
   }
 }
 
+.signup-page__footer {
+  text-align: center;
+  width: 100%;
+  margin-top: auto;
+  padding: 1.5rem 1rem;
+  font-family: var(--font-afacad);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: #f6de4f;
+  background: #181628;
+  border-top: 4px solid #f6de4f;
+  flex-shrink: 0;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
