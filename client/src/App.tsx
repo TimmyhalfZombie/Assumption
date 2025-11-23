@@ -1,4 +1,4 @@
-import LibraryScreen from './screens/Library/LibraryScreen'
+import LibraryScreen from './screens/LibraryScreen'
 
 const App = () => {
   return <LibraryScreen />
