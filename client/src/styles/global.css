@@ -43,6 +43,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background: radial-gradient(circle at top, #3f3d4c 0%, #2e2d36 55%, #23222a 100%);
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 a {
@@ -60,15 +62,56 @@ a {
   padding: 1.25rem clamp(1.25rem, 5vw, 4rem);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 2rem;
   background-color: rgba(22, 22, 30, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  flex-wrap: wrap;
   font-family: var(--font-afacad);
   position: sticky;
   top: 0;
   z-index: 1000;
   backdrop-filter: blur(4px);
+}
+
+.navigation-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navigation-bar__menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.navigation-bar__menu-icon {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #ffffff;
+  position: relative;
+}
+
+.navigation-bar__menu-icon::before,
+.navigation-bar__menu-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.navigation-bar__menu-icon::before {
+  top: -8px;
+}
+
+.navigation-bar__menu-icon::after {
+  top: 8px;
 }
 
 .crest-logo {
@@ -165,7 +208,6 @@ a {
 }
 
 .navigation-bar__login {
-  margin-left: auto;
   padding: 0.65rem 1.5rem;
   border-radius: 999px;
   background: linear-gradient(135deg, #f3d654 0%, #f0c419 100%);
@@ -625,6 +667,13 @@ a {
   border-bottom: 1px solid rgba(31, 29, 40, 0.18);
 }
 
+.signup-section__header h2 {
+  margin: 0;
+  font-size: inherit;
+  text-align: right;
+  flex: 1;
+}
+
 .signup-section__icon {
   font-size: 1.1rem;
   background: #1f1e2c;
@@ -811,7 +860,7 @@ a {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  font-family: 'Afacad', sans-serif;
+  font-family: 'Candal', sans-serif;
   font-weight: 700;
 }
 
@@ -852,6 +901,45 @@ a {
   width: 100%;
   height: 2px;
   background: #f3d654;
+}
+
+.signup-header__menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.signup-header__menu-icon {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #ffffff;
+  position: relative;
+}
+
+.signup-header__menu-icon::before,
+.signup-header__menu-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.signup-header__menu-icon::before {
+  top: -8px;
+}
+
+.signup-header__menu-icon::after {
+  top: 8px;
 }
 
 /* Hide login button in this specific layout as per screenshot request, 
@@ -904,9 +992,15 @@ a {
     text-align: center;
   }
 
-  .signup-page__logo {
-    width: 84px;
-    height: 84px;
+  .signup-header__nav {
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .signup-header__link {
+    font-size: 0.75rem;
   }
 
   .signup-form {
@@ -944,12 +1038,7 @@ a {
 }
 
 @media (max-width: 1024px) {
-  .navigation-bar {
-    justify-content: center;
-  }
-
   .navigation-bar__login {
-    order: 3;
     margin-left: 0;
   }
 
@@ -1000,101 +1089,144 @@ a {
     justify-content: center;
   }
 
+  /* Sidebar Menu Common Styles */
+  .navigation-bar__nav,
+  .signup-header__nav {
+    display: flex; /* Always flex, visibility controlled by transform */
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(300px, 90vw);
+    height: 100vh;
+    background: #ffffff;
+    padding: 6rem 2rem 2rem;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    align-items: flex-start;
+    gap: 1.5rem;
+    visibility: hidden; /* Hide when closed so it doesn't block clicks */
+  }
+
+  .navigation-bar__nav--open,
+  .signup-header__nav--open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  /* Links inside the sidebar */
   .navigation-bar__links {
+    flex-direction: column;
     width: 100%;
-    justify-content: center;
+    align-items: flex-start;
+    gap: 1.5rem;
+    font-size: 1rem;
+  }
+
+  .navigation-bar__link,
+  .signup-header__link {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    color: #333; /* Dark text on white background */
+    font-weight: 600;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    font-size: 0.85rem;
   }
 
-  .navigation-bar__link {
-    font-size: 0.9rem;
-    letter-spacing: 0.04em;
+  .navigation-bar__link a,
+  .signup-header__link {
+    color: #333;
   }
 
-  .navigation-bar__titles {
-    font-size: 0.85rem;
+  .navigation-bar__link--active,
+  .signup-header__link--active {
+    color: #1f1d28;
+    background: #f0f0f0; /* Highlight active item like in screenshot */
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0 -1rem;
+    width: calc(100% + 2rem);
   }
 
-  .navigation-bar__school {
-    font-size: 0.95rem;
+  .navigation-bar__indicator,
+  .signup-header__link--active::after {
+    display: none; /* Remove underlines in sidebar mode */
   }
 
-  .navigation-bar__login {
+  /* Toggle Button Transition Styles */
+  .navigation-bar__menu-toggle,
+  .signup-header__menu-toggle {
+    display: block;
+    z-index: 101; /* Above the sidebar */
+    position: relative;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navigation-bar__menu-icon,
+  .signup-header__menu-icon {
+    background: #ffffff; /* Default state color */
+    transition: background 0.2s ease;
+  }
+
+  .navigation-bar__menu-toggle--active .navigation-bar__menu-icon,
+  .signup-header__menu-toggle--active .signup-header__menu-icon {
+    background: transparent; /* Hide middle line */
+  }
+
+  .navigation-bar__menu-toggle--active .navigation-bar__menu-icon::before,
+  .signup-header__menu-toggle--active .signup-header__menu-icon::before {
+    top: 0;
+    transform: rotate(45deg);
+    background: #333; /* Dark color for X on white background */
+  }
+
+  .navigation-bar__menu-toggle--active .navigation-bar__menu-icon::after,
+  .signup-header__menu-toggle--active .signup-header__menu-icon::after {
+    top: 0;
+    transform: rotate(-45deg);
+    background: #333;
+  }
+
+  .navigation-bar__login--desktop,
+  .signup-header__login--desktop {
+    display: none;
+  }
+
+  .navigation-bar__login--mobile,
+  .signup-header__login--mobile {
+    display: block;
     width: 100%;
+    margin-top: 17rem; /* Move higher, closer to links */
     text-align: center;
-    font-size: 0.95rem;
+    background: linear-gradient(135deg, #f3d654 0%, #f0c419 100%);
+    color: #1f1d28;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
   }
 
-  .library-screen__content {
-    padding: 2rem 1rem 3rem;
+  .library-hero__title {
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
   }
 
   .library-hero__callout {
-    letter-spacing: 0.45em;
-  }
-
-  .search-form__fieldset {
-    padding: 0.6rem;
-    border-radius: 16px;
-    gap: 0.75rem;
-  }
-
-  .search-form__library-group {
-    background: transparent;
-    border: none;
-    gap: 0.6rem;
-  }
-
-  .search-form__select--library {
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    background: rgba(255, 255, 255, 0.9);
-    color: #2b2a36;
-    box-shadow: none;
-  }
-
-  .search-form__submit {
-    border-radius: 14px;
-    min-height: 48px;
-    padding: 0.85rem 1.1rem;
-  }
-
-  .library-screen__meta-links {
-    font-size: 0.85rem;
-  }
-
-  .login-modal {
-    padding: 1.75rem;
-    gap: 1rem;
-  }
-
-  .login-modal__title {
-    font-size: 1.4rem;
-  }
-
-  .login-modal__submit {
-    font-size: 0.95rem;
-  }
-
-  .signup-modal {
-    width: min(520px, 100%);
-    padding: 1.75rem;
-    gap: 1.25rem;
-  }
-
-  .signup-modal__grid--three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .signup-modal__actions {
-    flex-direction: column-reverse;
-  }
-
-  .signup-modal__primary,
-  .signup-modal__secondary {
-    width: 100%;
-    text-align: center;
+    font-size: 2rem;
+    letter-spacing: 0.25em;
+    margin-top: 0.5rem;
   }
 }
 

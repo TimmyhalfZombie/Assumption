@@ -7,9 +7,9 @@ export const useLoginModal = () => {
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const openLogin = () => {
-    setIsSignupOpen(false)
+  const openLogin = (prefillAccount = '') => {
     setIsLoginOpen(true)
+    if (prefillAccount) setAccount(prefillAccount)
   }
 
   const closeLogin = () => {

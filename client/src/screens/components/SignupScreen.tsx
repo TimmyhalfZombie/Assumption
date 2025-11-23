@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import type { SignupFormValues } from '../functions/useSignupForm'
+import { useMenuLock } from '../functions/useMenuLock'
 
 type SignupScreenProps = {
   values: SignupFormValues
@@ -17,16 +19,23 @@ const SignupScreen = ({
   onSubmit,
   onBackToLogin,
 }: SignupScreenProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  useMenuLock(isMenuOpen)
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     onSubmit()
+  }
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
   }
 
   return (
     <div className="signup-page">
       <header className="signup-header">
         <div className="signup-header__top">
-      <nav aria-label="Secondary" className="signup-header__nav">
+          <nav aria-label="Secondary" className={`signup-header__nav ${isMenuOpen ? 'signup-header__nav--open' : ''}`}>
         <a href="#" className="signup-header__link signup-header__link--active">
           Home
         </a>
@@ -39,15 +48,27 @@ const SignupScreen = ({
         <a href="#" className="signup-header__link">
           Policies
         </a>
-        <a href="#" className="signup-header__link">
-          Contact Us
-        </a>
-      </nav>
-      <button className="signup-header__login" type="button" onClick={onBackToLogin}>
-        Log into your account
-      </button>
-    </div>
-    <div className="signup-header__brand">
+          <a href="#" className="signup-header__link">
+            Contact Us
+          </a>
+          <button className="signup-header__login signup-header__login--mobile" type="button" onClick={onBackToLogin}>
+            Log into your account
+          </button>
+        </nav>
+        <button
+          className={`signup-header__menu-toggle ${isMenuOpen ? 'signup-header__menu-toggle--active' : ''}`}
+          type="button"
+          onClick={toggleMenu}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMenuOpen}
+        >
+          <span className="signup-header__menu-icon" aria-hidden="true"></span>
+        </button>
+        <button className="signup-header__login signup-header__login--desktop" type="button" onClick={onBackToLogin}>
+          Log into your account
+        </button>
+      </div>
+      <div className="signup-header__brand">
           <img src="/assets/images/assumption-logo.png" alt="Assumption Iloilo crest" className="signup-header__logo" />
           <div className="signup-header__titles">
             <h1>Assumption Iloilo</h1>

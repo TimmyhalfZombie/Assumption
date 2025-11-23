@@ -70,54 +70,51 @@ const LibraryScreen = () => {
     }
   }, [isLoginOpen])
 
-  if (isSignupOpen) {
-    return (
-      <SignupScreen
-        values={signupValues}
-        isSubmitting={signupSubmitting}
-        isPasswordMismatch={isPasswordMismatch}
-        onChange={updateValue}
-        onSubmit={handleSignupSubmit}
-        onBackToLogin={() => {
-          handleSignupClose()
-          openLogin()
-        }}
-      />
-    )
-  }
-
   return (
-    <div className="library-screen">
-      <NavigationBar onLoginClick={openLogin} />
-      <main className="library-screen__content">
-        <LibraryHero />
-        <section className="library-screen__search">
-          <SearchForm
-            catalogOptions={catalogOptions}
-            libraryOptions={libraryOptions}
-            selectedCatalog={selectedCatalog}
-            onCatalogChange={setSelectedCatalog}
-            searchTerm={searchTerm}
-            onSearchTermChange={setSearchTerm}
-            selectedLibrary={selectedLibrary}
-            onLibraryChange={setSelectedLibrary}
-            onSubmit={handleSubmit}
-          />
-          <div className="library-screen__meta-links">
-            <a href="#">Advanced search</a>
-            <span aria-hidden="true">|</span>
-            <a href="#">Authority search</a>
-            <span aria-hidden="true">|</span>
-            <a href="#">Tag Cloud</a>
-            <span aria-hidden="true">|</span>
-            <a href="#">Libraries</a>
-          </div>
-        </section>
-        <section className="library-screen__acquisitions">
-          <h2>New Acquisitions</h2>
-          <p>Featured titles will appear here.</p>
-        </section>
-      </main>
+    <>
+      {isSignupOpen ? (
+        <SignupScreen
+          values={signupValues}
+          isSubmitting={signupSubmitting}
+          isPasswordMismatch={isPasswordMismatch}
+          onChange={updateValue}
+          onSubmit={handleSignupSubmit}
+          onBackToLogin={() => openLogin()}
+        />
+      ) : (
+        <div className="library-screen">
+          <NavigationBar onLoginClick={() => openLogin()} />
+          <main className="library-screen__content">
+            <LibraryHero />
+            <section className="library-screen__search">
+              <SearchForm
+                catalogOptions={catalogOptions}
+                libraryOptions={libraryOptions}
+                selectedCatalog={selectedCatalog}
+                onCatalogChange={setSelectedCatalog}
+                searchTerm={searchTerm}
+                onSearchTermChange={setSearchTerm}
+                selectedLibrary={selectedLibrary}
+                onLibraryChange={setSelectedLibrary}
+                onSubmit={handleSubmit}
+              />
+              <div className="library-screen__meta-links">
+                <a href="#">Advanced search</a>
+                <span aria-hidden="true">|</span>
+                <a href="#">Authority search</a>
+                <span aria-hidden="true">|</span>
+                <a href="#">Tag Cloud</a>
+                <span aria-hidden="true">|</span>
+                <a href="#">Libraries</a>
+              </div>
+            </section>
+            <section className="library-screen__acquisitions">
+              <h2>New Acquisitions</h2>
+              <p>Featured titles will appear here.</p>
+            </section>
+          </main>
+        </div>
+      )}
       <LoginModal
         isOpen={isLoginOpen}
         account={account}
@@ -129,7 +126,7 @@ const LibraryScreen = () => {
         onSubmit={handleLoginSubmit}
         onCreateAccount={openSignup}
       />
-    </div>
+    </>
   )
 }
 
