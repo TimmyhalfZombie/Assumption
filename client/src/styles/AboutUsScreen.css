@@ -46,7 +46,8 @@
 }
 
 .about-us-history {
-  padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+  /* Reduced side padding to occupy more space as requested */
+  padding: clamp(3rem, 5vw, 5rem) clamp(1rem, 3vw, 2rem);
   background: #ffffff;
   display: flex;
   justify-content: center;
@@ -54,17 +55,22 @@
 
 .about-us-history__container {
   width: 100%;
-  max-width: 1200px;
+  /* Increased max-width to fill more space */
+  max-width: 1600px; 
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .about-us-history__title {
   font-family: var(--font-afacad);
   font-weight: 700;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  color: #2e2d36;
+  /* Increased font size for desktop */
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: #1f1d28; /* Using theme dark color */
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 0 0 2rem;
+  margin: 0 0 1rem;
   position: relative;
   display: inline-block;
 }
@@ -72,26 +78,354 @@
 .about-us-history__title::after {
   content: '';
   display: block;
-  width: 60px;
-  height: 4px;
+  width: 80px;
+  height: 5px;
   background: #f3d654;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
 }
 
-.about-us-history__text {
+.about-us-history__intro {
+  margin-bottom: 2rem;
   font-family: var(--font-afacad);
-  font-size: 1rem;
-  line-height: 1.6;
   color: #4a4a5a;
 }
 
-.about-us-history__text p {
+.about-us-history__address,
+.about-us-history__subtitle {
+  font-size: 1.1rem;
+  margin: 0.25rem 0;
+}
+
+.about-us-history__motto {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+/* Foundation Section */
+.about-us-foundation__title {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1f1d28;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+}
+
+.about-us-foundation__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.about-us-foundation__image-wrapper {
+  width: 100%;
+  max-width: 400px; /* Limit image width */
+  flex-shrink: 0;
+}
+
+.about-us-foundation__image {
+  width: 100%;
+  height: auto;
+  border: 4px solid #f3d654; /* Adding a border consistent with theme */
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.about-us-foundation__text {
+  font-family: var(--font-afacad);
+  font-size: 1.1rem; /* Slightly bigger text */
+  line-height: 1.7;
+  color: #2e2d36;
+  flex: 1;
+  text-align: justify; /* Make text justified for better reading flow */
+}
+
+.about-us-foundation__text p {
+  margin-bottom: 1.2rem;
+}
+
+.about-us-foundation__full-image {
+  margin-top: 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-us-foundation__wide-image {
+  width: 100%;
+  max-width: 1000px; /* Limit width of bottom image */
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.about-us-image-caption {
+  margin-top: 0.75rem;
+  font-family: var(--font-afacad);
+  font-size: 1rem;
+  color: #4a4a5a;
+  text-align: center;
+}
+
+/* School History Section */
+.about-us-school-history {
+  margin-top: 3rem;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding-top: 3rem;
+}
+
+.about-us-school-history__title {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1f1d28;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+}
+
+.about-us-school-history__subtitle {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1f1d28;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 2rem 0 1rem;
+}
+
+.about-us-school-history__content {
+  font-family: var(--font-afacad);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #2e2d36;
+  text-align: justify;
+}
+
+.about-us-school-history__content p {
   margin-bottom: 1rem;
+}
+
+.about-us-school-history__list {
+  list-style-type: disc;
+  padding-left: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-us-school-history__list li {
+  margin-bottom: 0.5rem;
+}
+
+/* Vision Mission Objectives Section */
+.about-us-vmo {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.about-us-vmo__column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Or center if you prefer */
+  gap: 1rem;
+}
+
+.about-us-vmo__title {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1f1d28;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 100%;
+  text-align: center;
+}
+
+.about-us-vmo__column p, 
+.about-us-vmo__column ul {
+  font-family: var(--font-afacad);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #4a4a5a;
+  text-align: justify;
+}
+
+.about-us-vmo__column ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+/* Values Section */
+.about-us-values {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.about-us-values__title {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1f1d28; /* Or blue if per screenshot */
+  text-transform: capitalize; /* Or uppercase per screenshot style */
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.about-us-values__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-afacad);
+  font-size: 1.1rem;
+  color: #4a4a5a;
+}
+
+/* Video Section */
+.about-us-video {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.about-us-video__wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  padding-bottom: 40%; /* Slightly reduced height */
+  height: 0;
+  overflow: hidden;
+}
+
+.about-us-video__iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 4px;
+}
+
+.about-us-video__content {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  font-family: var(--font-afacad);
+  color: #4a4a5a;
+}
+
+.about-us-video__heading {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1f1d28;
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+
+.about-us-video__text {
+  font-family: var(--font-afacad);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #4a4a5a;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.about-us-video__list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-afacad);
+  font-size: 1.1rem;
+  color: #4a4a5a;
+}
+
+.about-us-video__list li {
+  text-align: center;
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .about-us-foundation__content {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 3rem;
+  }
+
+  .about-us-history__title {
+    font-size: 2.5rem;
+  }
+
+  .about-us-foundation__text,
+  .about-us-school-history__content,
+  .about-us-vmo__column p,
+  .about-us-vmo__column ul,
+  .about-us-values__list {
+    font-size: 1.2rem; /* Bigger font on desktop */
+  }
+  
+  .about-us-history__intro p {
+    font-size: 1.2rem;
+  }
+
+  .about-us-vmo {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .about-us-values {
+    flex-direction: row;
+    justify-content: space-around; /* Space them out nicely */
+  }
+  
+  .about-us-values__section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-us-video__content {
+    max-width: 900px;
+  }
+
+  .about-us-video__heading,
+  .about-us-video__text,
+  .about-us-video__list {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 768px) {
   .about-us-hero {
     height: 300px;
   }
+  
+  .about-us-foundation__image-wrapper {
+    max-width: 100%;
+  }
 }
-
