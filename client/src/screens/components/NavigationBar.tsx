@@ -5,14 +5,21 @@ import { useMenuLock } from '../functions/useMenuLock'
 type NavigationBarProps = {
   onLoginClick: () => void
   ctaLabel?: string
+  onNavigate: (page: string) => void
 }
 
-const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account' }: NavigationBarProps) => {
+const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNavigate }: NavigationBarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   useMenuLock(isMenuOpen)
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
+  }
+
+  const handleNavClick = (page: string) => (event: React.MouseEvent) => {
+    event.preventDefault()
+    onNavigate(page)
+    setIsMenuOpen(false)
   }
 
   return (
@@ -27,12 +34,11 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account' }: Nav
       <div className="navigation-bar__actions">
         <nav aria-label="Primary" className={`navigation-bar__nav ${isMenuOpen ? 'navigation-bar__nav--open' : ''}`}>
           <ul className="navigation-bar__links">
-            <li className="navigation-bar__link navigation-bar__link--active">
-              <a href="#">Home</a>
-              <span className="navigation-bar__indicator" aria-hidden="true" />
+            <li className="navigation-bar__link">
+              <a href="#" onClick={handleNavClick('home')}>Home</a>
             </li>
             <li className="navigation-bar__link">
-              <a href="#">About Us</a>
+              <a href="#" onClick={handleNavClick('about')}>About Us</a>
             </li>
             <li className="navigation-bar__link">
               <a href="#">Academics</a>
@@ -72,4 +78,3 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account' }: Nav
 }
 
 export default NavigationBar
-

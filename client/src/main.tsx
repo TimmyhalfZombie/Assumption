@@ -8,6 +8,7 @@ import './styles/LoginModal.css'
 import './styles/NavigationBar.css'
 import './styles/SearchForm.css'
 import './styles/SignupScreen.css'
+import './styles/AboutUsScreen.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

@@ -8,7 +8,11 @@ import { useLibrarySearch } from './functions/useLibrarySearch'
 import { useLoginModal } from './functions/useLoginModal'
 import { useSignupForm } from './functions/useSignupForm'
 
-const LibraryScreen = () => {
+type LibraryScreenProps = {
+  onNavigate: (page: string) => void
+}
+
+const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
   const {
     catalogOptions,
     libraryOptions,
@@ -83,7 +87,7 @@ const LibraryScreen = () => {
         />
       ) : (
         <div className="library-screen">
-          <NavigationBar onLoginClick={() => openLogin()} />
+          <NavigationBar onLoginClick={() => openLogin()} onNavigate={onNavigate} />
           <main className="library-screen__content">
             <LibraryHero />
             <section className="library-screen__search">
@@ -131,4 +135,3 @@ const LibraryScreen = () => {
 }
 
 export default LibraryScreen
-

@@ -1,0 +1,97 @@
+.about-us-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.about-us-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-us-hero {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background-image: url('/assets/images/Assumption-iloilo-school-campus.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-us-hero__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 29, 42, 0.6); /* Dark overlay */
+}
+
+.about-us-hero__title {
+  position: relative;
+  color: #ffffff;
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: clamp(3rem, 8vw, 5rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  z-index: 1;
+  margin: 0;
+}
+
+.about-us-history {
+  padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+.about-us-history__container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.about-us-history__title {
+  font-family: var(--font-afacad);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: #2e2d36;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.about-us-history__title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #f3d654;
+  margin-top: 0.5rem;
+}
+
+.about-us-history__text {
+  font-family: var(--font-afacad);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a4a5a;
+}
+
+.about-us-history__text p {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .about-us-hero {
+    height: 300px;
+  }
+}
+
