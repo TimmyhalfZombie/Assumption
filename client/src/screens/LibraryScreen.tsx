@@ -87,7 +87,7 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
         />
       ) : (
         <div className="library-screen">
-          <NavigationBar onLoginClick={() => openLogin()} onNavigate={onNavigate} />
+          <NavigationBar onLoginClick={() => openLogin()} onNavigate={onNavigate} currentPage="home" />
           <main className="library-screen__content">
             <LibraryHero />
             <section className="library-screen__search">
