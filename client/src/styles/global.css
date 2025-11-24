@@ -171,6 +171,7 @@ a {
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
 }
 
 .navigation-bar__links {
@@ -885,6 +886,14 @@ a {
   font-family: 'Afacad', sans-serif;
 }
 
+.signup-header__titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  line-height: 1.15;
+}
+
 .signup-header__logo {
   width: clamp(70px, 10vw, 90px);
   height: clamp(70px, 10vw, 90px);
@@ -1027,8 +1036,10 @@ a {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: clamp(0.75rem, 3vw, 1.25rem);
+    gap: 1rem;
+    padding: 1rem 1.25rem;
     text-align: left;
+    width: 100%;
   }
 
   .signup-header__actions {
@@ -1046,39 +1057,52 @@ a {
     flex: 1;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 0.85rem;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 0.75rem;
     min-width: 0;
   }
 
   .signup-header__logo {
-    width: clamp(52px, 14vw, 70px);
-    height: clamp(52px, 14vw, 70px);
+    width: clamp(48px, 8vw, 64px);
+    height: clamp(48px, 8vw, 64px);
     object-fit: contain;
+    flex-shrink: 0;
   }
 
   .signup-header__titles {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    line-height: 1.1;
+    align-items: flex-start;
+    text-align: left;
+    margin-left: 0;
+    line-height: 1.2;
+    min-width: 0;
   }
 
   .signup-header__titles h1 {
     width: 100%;
     margin: 0;
-    font-size: clamp(1.2rem, 5vw, 1.6rem);
-    letter-spacing: 0.28em;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-afacad);
   }
 
   .signup-header__titles p {
     width: 100%;
-    margin: 0.35rem 0 0;
-    font-size: clamp(0.78rem, 3.2vw, 0.95rem);
-    letter-spacing: 0.12em;
-    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.75);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-afacad);
   }
 
   .signup-header__nav {
@@ -1095,7 +1119,14 @@ a {
     transform: none;
     top: auto;
     right: auto;
-    margin-left: clamp(0.5rem, 4vw, 1.25rem);
+    margin-left: 0;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .signup-form {
