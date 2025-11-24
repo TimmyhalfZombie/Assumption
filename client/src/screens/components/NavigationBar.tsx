@@ -35,10 +35,16 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account' }: Nav
               <a href="#">About Us</a>
             </li>
             <li className="navigation-bar__link">
-              <a href="#">Mission and Vision</a>
+              <a href="#">Academics</a>
             </li>
             <li className="navigation-bar__link">
-              <a href="#">Policies</a>
+              <a href="#">Admissions</a>
+            </li>
+            <li className="navigation-bar__link">
+              <a href="#">News & Events</a>
+            </li>
+            <li className="navigation-bar__link">
+              <a href="#">School Facilities</a>
             </li>
             <li className="navigation-bar__link">
               <a href="#">Contact Us</a>
