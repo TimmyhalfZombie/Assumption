@@ -1036,6 +1036,10 @@ a {
     flex: 0 0 auto;
     justify-content: flex-end;
     gap: 0.75rem;
+    position: static;
+    right: auto;
+    top: auto;
+    transform: none;
   }
 
   .signup-header__brand {
@@ -1084,6 +1088,14 @@ a {
 
   .signup-header__link {
     font-size: 0.9rem;
+  }
+
+  .signup-header__menu-toggle {
+    position: static;
+    transform: none;
+    top: auto;
+    right: auto;
+    margin-left: clamp(0.5rem, 4vw, 1.25rem);
   }
 
   .signup-form {
