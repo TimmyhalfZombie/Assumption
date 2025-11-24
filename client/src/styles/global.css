@@ -1023,20 +1023,67 @@ a {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  .signup-page__header {
-    flex-direction: column;
+  .signup-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.75rem, 3vw, 1.25rem);
+    text-align: left;
+  }
+
+  .signup-header__actions {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  .signup-header__brand {
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .signup-header__logo {
+    width: clamp(52px, 14vw, 70px);
+    height: clamp(52px, 14vw, 70px);
+    object-fit: contain;
+  }
+
+  .signup-header__titles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .signup-header__titles h1 {
+    width: 100%;
+    margin: 0;
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+    letter-spacing: 0.28em;
+  }
+
+  .signup-header__titles p {
+    width: 100%;
+    margin: 0.35rem 0 0;
+    font-size: clamp(0.78rem, 3.2vw, 0.95rem);
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .signup-header__nav {
     gap: 0.75rem;
-    font-size: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    font-size: 0.9rem;
   }
 
   .signup-header__link {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
   }
 
   .signup-form {
