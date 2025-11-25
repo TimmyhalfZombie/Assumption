@@ -232,31 +232,37 @@ const CSS = `
 }
 
 .news-hero {
-  background-color: #1f1d28;
-  color: #ffffff;
-  padding: 4rem 2rem;
-  text-align: center;
   position: relative;
+  width: 100%;
+  height: 400px;
+  background-image: url('/assets/images/Assumption-iloilo-school-campus.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.news-hero::before {
-  content: '';
+.news-hero__overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 5px;
-  background: #f3d654;
+  height: 100%;
+  background: rgba(30, 29, 42, 0.6); /* Dark overlay */
 }
 
 .news-hero__title {
+  position: relative;
   font-family: var(--font-afacad);
   font-weight: 700;
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(3rem, 8vw, 5rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
   color: #ffffff;
+  z-index: 1;
 }
 
 .news-container {
@@ -441,6 +447,21 @@ const CSS = `
 .news-detail__body p {
   margin-bottom: 1.5rem;
 }
+
+@media (max-width: 768px) {
+  .news-hero {
+    height: 300px;
+  }
+
+  .news-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .news-card__image-wrapper {
+    height: 180px;
+  }
+}
 `
 
 type NewsEventsScreenProps = {
@@ -497,6 +518,7 @@ const NewsEventsScreen = ({ onNavigate }: NewsEventsScreenProps) => {
       
       {!selectedArticle && (
         <header className="news-hero">
+          <div className="news-hero__overlay"></div>
           <h1 className="news-hero__title">News & Events</h1>
         </header>
       )}

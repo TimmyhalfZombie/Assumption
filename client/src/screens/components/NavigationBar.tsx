@@ -347,6 +347,10 @@ const CSS = `
     display: flex;
     align-items: center;
     justify-content: center;
+    line-height: 1;
+    letter-spacing: 0;
+    margin-top: 0;
+    align-self: center;
   }
 }
 `
