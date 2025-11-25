@@ -12,9 +12,11 @@ export const useLoginModal = () => {
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const openLogin = (prefillAccount = '') => {
+  const openLogin = () => {
     setIsLoginOpen(true)
-    if (prefillAccount) setAccount(prefillAccount)
+    // Always clear account field when opening login modal
+    setAccount('')
+    setPassword('')
   }
 
   const closeLogin = () => {

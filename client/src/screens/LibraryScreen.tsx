@@ -53,12 +53,8 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
   }
 
   const handleSignupSubmit = async () => {
-    const createdAccount = signupValues.email
     await submitSignup()
     handleSignupClose()
-    if (createdAccount) {
-      handleAccountChange(createdAccount)
-    }
     openLogin()
   }
 

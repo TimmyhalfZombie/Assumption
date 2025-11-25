@@ -1,4 +1,21 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+// --- Inline Icons for Password Toggle ---
+const EyeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+)
+
+const EyeOffIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7c.44 0 .87-.03 1.28-.09" />
+    <line x1="2" y1="2" x2="22" y2="22" />
+  </svg>
+)
 
 type LoginModalProps = {
   isOpen: boolean
@@ -23,6 +40,8 @@ const LoginModal = ({
   onSubmit,
   onCreateAccount,
 }: LoginModalProps) => {
+  const [showPassword, setShowPassword] = useState(false)
+
   useEffect(() => {
     const styleId = 'login-modal-styles'
     if (!document.getElementById(styleId)) {
@@ -32,6 +51,13 @@ const LoginModal = ({
       document.head.appendChild(style)
     }
   }, [])
+
+  // Reset password visibility when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShowPassword(false)
+    }
+  }, [isOpen])
 
   if (!isOpen) {
     return null
@@ -82,16 +108,26 @@ const LoginModal = ({
           <label className="login-modal__label" htmlFor="login-password">
             Password
           </label>
-          <input
-            id="login-password"
-            type="password"
-            className="login-modal__input"
-            value={password}
-            onChange={(event) => onPasswordChange(event.target.value)}
-            placeholder="Password"
-            autoComplete="current-password"
-            required
-          />
+          <div className="login-modal__password-wrapper">
+            <input
+              id="login-password"
+              type={showPassword ? "text" : "password"}
+              className="login-modal__input login-modal__input--password"
+              value={password}
+              onChange={(event) => onPasswordChange(event.target.value)}
+              placeholder="Password"
+              autoComplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              className="login-modal__password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+            </button>
+          </div>
 
           <button className="login-modal__submit" type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Logging in...' : 'Login'}
@@ -211,6 +247,43 @@ const CSS = `
   font-family: var(--font-afacad);
   color: rgba(255, 255, 255, 0.3);
   letter-spacing: 0.04em;
+}
+
+.login-modal__password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.login-modal__input--password {
+  padding-right: 3rem;
+}
+
+.login-modal__password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.2s ease;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.login-modal__password-toggle:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.login-modal__password-toggle:focus {
+  outline: none;
+  color: rgba(243, 214, 84, 0.8);
 }
 
 .login-modal__submit {
