@@ -12,15 +12,14 @@ const CSS = `
 }
 
 .library-hero__logo {
-  width: clamp(120px, 16vw, 160px);
-  height: clamp(120px, 16vw, 160px);
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.32);
+  width: clamp(140px, 22vw, 180px);
+  height: clamp(140px, 22vw, 180px);
+  background: transparent;
 }
 
 .library-hero__logo .crest-logo__image {
-  width: 96%;
-  height: 96%;
+  width: 100%;
+  height: 100%;
 }
 
 .library-hero__title {

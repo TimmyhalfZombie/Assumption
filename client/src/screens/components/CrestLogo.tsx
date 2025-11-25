@@ -45,17 +45,17 @@ const CSS = `
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(60px, 9vw, 82px);
-  height: clamp(60px, 9vw, 82px);
+  width: clamp(90px, 20vw, 115px);
+  height: clamp(90px, 20vw, 115px);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.96);
-  overflow: hidden;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  background: transparent;
+  overflow: visible;
 }
 
 .crest-logo__image {
-  width: 94%;
-  height: 94%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
 }
 `
