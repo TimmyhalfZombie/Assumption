@@ -264,7 +264,15 @@ const AdmissionsScreen = ({ onNavigate }: AdmissionsScreenProps) => {
         onSubmit={handleLoginSubmit}
         onCreateAccount={() => {
            closeLogin()
-           onNavigate('home') 
+           const currentHash = window.location.hash.slice(1)
+           if (currentHash === 'home' || !currentHash) {
+             // Already on home, just add signup parameter
+             window.location.search = '?signup=true'
+           } else {
+             // Navigate to home with signup parameter
+             onNavigate('home')
+             window.location.search = '?signup=true'
+           }
         }}
       />
       <footer className="signup-page__footer" style={{ marginTop: 'auto', padding: '1.5rem 1rem', textAlign: 'center', background: '#181628', color: '#f6de4f', borderTop: '4px solid #f6de4f', fontFamily: 'var(--font-afacad)' }}>

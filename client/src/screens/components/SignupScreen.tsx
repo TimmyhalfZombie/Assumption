@@ -272,6 +272,7 @@ type SignupScreenProps = {
   onChange: (field: keyof SignupFormValues, value: string) => void
   onSubmit: () => void
   onBackToLogin: () => void
+  onNavigate: (page: string) => void
 }
 
 const SignupScreen = ({
@@ -281,6 +282,7 @@ const SignupScreen = ({
   onChange,
   onSubmit,
   onBackToLogin,
+  onNavigate,
 }: SignupScreenProps) => {
   useEffect(() => {
     const styleId = 'signup-screen-styles'
@@ -299,7 +301,7 @@ const SignupScreen = ({
 
   return (
     <div className="signup-page">
-      <NavigationBar onLoginClick={onBackToLogin} onNavigate={() => {}} />
+      <NavigationBar onLoginClick={onBackToLogin} onNavigate={onNavigate} currentPage="home" />
       <main className="signup-screen__content">
         <form className="signup-form" onSubmit={handleSubmit}>
           <section className="signup-section signup-section--library">

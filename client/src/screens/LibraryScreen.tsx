@@ -74,6 +74,39 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
     }
   }, [isLoginOpen])
 
+  // Check URL for signup parameter and auto-open signup
+  useEffect(() => {
+    const checkAndOpenSignup = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('signup') === 'true') {
+        openSignup()
+        // Remove the parameter from URL
+        urlParams.delete('signup')
+        const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash
+        window.history.replaceState({}, '', newUrl)
+      }
+    }
+
+    // Check immediately
+    checkAndOpenSignup()
+
+    // Also check on hash changes (when navigating to home)
+    const handleHashChange = () => {
+      checkAndOpenSignup()
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [openSignup])
+
+  const handleSignupNavigate = (page: string) => {
+    if (page === 'home') {
+      closeSignup()
+      resetForm()
+    }
+    onNavigate(page)
+  }
+
   return (
     <>
       {isSignupOpen ? (
@@ -84,6 +117,7 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
           onChange={updateValue}
           onSubmit={handleSignupSubmit}
           onBackToLogin={() => openLogin()}
+          onNavigate={handleSignupNavigate}
         />
       ) : (
         <div className="library-screen">

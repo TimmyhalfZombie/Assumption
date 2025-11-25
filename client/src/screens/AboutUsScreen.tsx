@@ -256,7 +256,15 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
         onSubmit={handleLoginSubmit}
         onCreateAccount={() => {
             closeLogin()
-            onNavigate('home') 
+            const currentHash = window.location.hash.slice(1)
+            if (currentHash === 'home' || !currentHash) {
+              // Already on home, just add signup parameter
+              window.location.search = '?signup=true'
+            } else {
+              // Navigate to home with signup parameter
+              onNavigate('home')
+              window.location.search = '?signup=true'
+            }
         }}
       />
       <footer className="signup-page__footer">© {new Date().getFullYear()} Assumption Iloilo</footer>

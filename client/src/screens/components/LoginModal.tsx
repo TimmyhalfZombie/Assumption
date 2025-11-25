@@ -12,7 +12,7 @@ const CSS = `
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 20000;
   padding: 1rem;
   opacity: 0;
   animation: fadeIn 0.25s ease forwards;
@@ -33,6 +33,8 @@ const CSS = `
   transform: translateY(20px) scale(0.98);
   opacity: 0;
   animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  z-index: 20001;
+  pointer-events: auto;
 }
 
 .login-modal__close {
@@ -52,6 +54,8 @@ const CSS = `
   border-radius: 50%;
   transition: all 0.2s ease;
   line-height: 1;
+  z-index: 20001;
+  pointer-events: auto;
 }
 
 .login-modal__close:hover {
@@ -118,6 +122,8 @@ const CSS = `
   font-family: var(--font-afacad);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  pointer-events: auto;
+  z-index: 20002;
 }
 
 .login-modal__submit:hover:not(:disabled) {
@@ -140,6 +146,8 @@ const CSS = `
   cursor: pointer;
   padding: 0;
   transition: color 0.2s ease;
+  pointer-events: auto;
+  z-index: 20002;
 }
 
 .login-modal__create-account:hover {
@@ -205,10 +213,32 @@ const LoginModal = ({
     onSubmit()
   }
 
+  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      onClose()
+    }
+  }
+
+  const handleCloseClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    onClose()
+  }
+
   return (
-    <div className="login-modal__overlay" role="dialog" aria-modal="true" aria-labelledby="login-title">
-      <div className="login-modal">
-        <button className="login-modal__close" type="button" onClick={onClose} aria-label="Close login form">
+    <div 
+      className="login-modal__overlay" 
+      role="dialog" 
+      aria-modal="true" 
+      aria-labelledby="login-title"
+      onClick={handleOverlayClick}
+    >
+      <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+        <button 
+          className="login-modal__close" 
+          type="button" 
+          onClick={handleCloseClick} 
+          aria-label="Close login form"
+        >
           ×
         </button>
         <h2 id="login-title" className="login-modal__title">
