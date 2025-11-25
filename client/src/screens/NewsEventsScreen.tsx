@@ -41,7 +41,7 @@ const NEWS_CONTENT = [
     title: "Assumption Iloilo Launches Collective Website for Transformateur and Mariale",
     date: "June 7, 2024",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/AC-Publications.png",
     excerpt: "Assumption Iloilo proudly announces the launch of its collective website, housing the archives of...",
     fullContent: `
       <p>Assumption Iloilo proudly announces the launch of its collective website, housing the archives of <em>Transformateur</em> and <em>Mariale</em>. This digital initiative aims to preserve the rich literary and journalistic history of the institution.</p>
@@ -54,7 +54,7 @@ const NEWS_CONTENT = [
     title: "Assumption Iloilo Celebrates Gabriel M. Enriquez's Success in Hua Siong Mathletics Competition",
     date: "February 5, 2024",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/gabriel.jpg",
     excerpt: "On February 3, 2024, the Irene Ang Jun Teng Uygongco Auditorium at Hua Siong College of Iloilo...",
     fullContent: `
       <p>On February 3, 2024, the Irene Ang Jun Teng Uygongco Auditorium at Hua Siong College of Iloilo became the stage for a display of mathematical prowess.</p>
@@ -67,7 +67,7 @@ const NEWS_CONTENT = [
     title: "AYIMUN 2024 Recap",
     date: "February 1, 2024",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/Ayimuni.jpg",
     excerpt: "Thrilled to share the incredible journey of our Assumption Iloilo delegates at the Asian Youth...",
     fullContent: `
       <p>We are thrilled to share the incredible journey of our Assumption Iloilo delegates at the Asian Youth International Model United Nations (AYIMUN) 2024.</p>
@@ -80,7 +80,7 @@ const NEWS_CONTENT = [
     title: "Family Day 2023",
     date: "January 10, 2024",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/Assumption-Family-Day.png",
     excerpt: "Relive the captivating moments of our unforgettable Family Day, which took place on December 17...",
     fullContent: `
       <p>Relive the captivating moments of our unforgettable Family Day, which took place on December 17. The campus was filled with laughter, games, and the warmth of family bonds.</p>
@@ -93,7 +93,7 @@ const NEWS_CONTENT = [
     title: "Admissions for SY 2024-2025 are now open!",
     date: "January 9, 2024",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/Assumption.png",
     excerpt: "For inquiries, reach out to us via phone at 337-3194 or 338-1816, or drop us an email at...",
     fullContent: `
       <p>Assumption Iloilo is now accepting applications for School Year 2024-2025! We invite parents and guardians to join our growing family.</p>
@@ -106,7 +106,7 @@ const NEWS_CONTENT = [
     title: "Andrea Hope Uy Receives 2023 Youth Excellence in Science Award for International STEM Achievements",
     date: "November 24, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/Andrea-Hope-Uy.jpg",
     excerpt: "Andrea Hope Uy Wins 2023 Youth Excellence in Science (YES) Award for Global STEM Success Assumption...",
     fullContent: `
       <p>Andrea Hope Uy has been awarded the 2023 Youth Excellence in Science (YES) Award by the Department of Science and Technology (DOST). This prestigious award recognizes her outstanding achievements in international STEM competitions.</p>
@@ -119,7 +119,7 @@ const NEWS_CONTENT = [
     title: "Assumption Iloilo's Community Clinic 2023: A Day of Compassion and Care",
     date: "November 19, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/Assumption.png",
     excerpt: "Assumption Iloilo's Community Clinic 2023: A Day of Compassion and Care In the spirit of...",
     fullContent: `
       <p>In the spirit of service and social responsibility, Assumption Iloilo held its annual Community Clinic 2023. The event provided free medical and dental services to our partner communities.</p>
@@ -132,7 +132,7 @@ const NEWS_CONTENT = [
     title: "Strengthening Bonds: A Cultural Exchange Journey with Assumption Iloilo and Assumption Kokusai",
     date: "November 15, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/strengthening-bonds.jpg",
     excerpt: "Between August 19 and September 2, 2023, Assumption Iloilo warmly hosted a group of Japanese learners from Assumption Kokusai...",
     fullContent: `
       <p>Between August 19 and September 2, 2023, Assumption Iloilo warmly hosted a group of Japanese learners from Assumption Kokusai, Osaka, Japan, as part of the Assumption Learners Exchange Program. The program, aimed at nurturing the Assumption Spirit in both school communities, welcomed the visitors, including Miss Cecile Adrias, a former English Teacher at Assumption Iloilo and now an English teacher at Assumption Kokusai, along with Miss Naomi Tanzawa, the school's principal.</p>
@@ -149,7 +149,7 @@ const NEWS_CONTENT = [
     title: "Navigating the Future: Mr. Louie Cervantes Explores the Impact of Artificial Intelligence on Education",
     date: "November 13, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/navigating-future.jpg",
     excerpt: "Mr. Louie Cervantes delves into the transformative role of AI in modern classrooms and how Assumption Iloilo is adapting...",
     fullContent: `
       <p>In a thought-provoking seminar held at the St. Anne's Hall, Mr. Louie Cervantes addressed the faculty and student body regarding the rapidly evolving landscape of Artificial Intelligence (AI) and its profound implications for education.</p>
@@ -166,7 +166,7 @@ const NEWS_CONTENT = [
     title: "Zen Jollie Heler as Girl Mayor and Jianni Martina Provido as Girl City Agriculturist",
     date: "October 25, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/zen jollie.jpg",
     excerpt: "Assumption Iloilo student leaders take on key roles in the city government as part of the Rotary Club's Boys and Girls Week...",
     fullContent: `
       <p>Assumption Iloilo proudly announces the selection of Zen Jollie Heler as Girl Mayor and Jianni Martina Provido as Girl City Agriculturist for this year's Rotary Club Boys and Girls Week. This annual event allows high-achieving students to experience public service firsthand by assuming the roles of city officials for a week.</p>
@@ -183,7 +183,7 @@ const NEWS_CONTENT = [
     title: "Assumption Iloilo Rings in World Teachers' Day with Fun and Festivity",
     date: "October 6, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/assumption-iloilo-teachers-day.jpg",
     excerpt: "A day filled with gratitude, performances, and surprises as the student body honors the hardworking faculty...",
     fullContent: `
       <p>The campus was abuzz with excitement as Assumption Iloilo celebrated World Teachers' Day. The student council organized a surprise morning assembly where teachers were welcomed with leis and personalized notes of appreciation from their students.</p>
@@ -198,7 +198,7 @@ const NEWS_CONTENT = [
     title: "Assumption Iloilo Literacy Week 2023: A Celebration of Reading, Learning, and Fun!",
     date: "September 25, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/assumption-iloilo-literacy-week.jpg",
     excerpt: "Literacy Week is a yearly tradition that encourages students to discover the joy of reading...",
     fullContent: `
       <p>Assumption Iloilo Literacy Week 2023 was a resounding success! The week-long celebration featured book fairs, storytelling sessions, and literary costume parades.</p>
@@ -211,7 +211,7 @@ const NEWS_CONTENT = [
     title: "Assumption Iloilo School Faculty and Staff Embrace Thai Riches in Cultural Exposure Trip to Bangkok",
     date: "July 15, 2023",
     author: "Assumption Iloilo",
-    image: "/assets/images/Assumption-iloilo-school-campus.png",
+    image: "/assets/images/News/assumption-iloilo-goes-to-bankgkok.jpg",
     excerpt: "Assumption Iloilo School Faculty and Staff Embrace Thai Riches in Cultural Exposure Trip to Bangkok...",
     fullContent: `
       <p>From July 2-6, 2023, the Assumption Iloilo faculty and staff embarked on a Cultural Exposure Trip to Bangkok, Thailand. The trip provided an opportunity for the team to immerse themselves in Thai culture, history, and education.</p>
