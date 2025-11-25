@@ -25,7 +25,7 @@ const CSS = `
 
 .library-hero__title {
   display: block;
-  font-family: var(--font-afacad);
+  font-family: var(--font-candal);
   font-size: clamp(1.6rem, 3.5vw, 2.6rem);
   text-transform: uppercase;
   letter-spacing: 0.25em;
@@ -34,7 +34,7 @@ const CSS = `
 
 .library-hero__callout {
   margin: 1rem 0 0.25rem;
-  font-family: var(--font-afacad);
+  font-family: var(--font-candal);
   font-size: clamp(3rem, 12vw, 4.5rem);
   font-weight: 800;
   text-transform: uppercase;

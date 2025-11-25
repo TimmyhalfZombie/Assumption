@@ -367,17 +367,20 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNav
               <a href="#" onClick={handleNavClick('about')}>About Us</a>
               <span className="navigation-bar__indicator"></span>
             </li>
-            <li className="navigation-bar__link">
-              <a href="#">Academics</a>
+            <li className={`navigation-bar__link ${currentPage === 'academics' ? 'navigation-bar__link--active' : ''}`}>
+              <a href="#" onClick={handleNavClick('academics')}>Academics</a>
+              <span className="navigation-bar__indicator"></span>
             </li>
-            <li className="navigation-bar__link">
-              <a href="#">Admissions</a>
+            <li className={`navigation-bar__link ${currentPage === 'admissions' ? 'navigation-bar__link--active' : ''}`}>
+              <a href="#" onClick={handleNavClick('admissions')}>Admissions</a>
+              <span className="navigation-bar__indicator"></span>
             </li>
             <li className="navigation-bar__link">
               <a href="#">News & Events</a>
             </li>
-            <li className="navigation-bar__link">
-              <a href="#">School Facilities</a>
+            <li className={`navigation-bar__link ${currentPage === 'facilities' ? 'navigation-bar__link--active' : ''}`}>
+              <a href="#" onClick={handleNavClick('facilities')}>School Facilities</a>
+              <span className="navigation-bar__indicator"></span>
             </li>
             <li className="navigation-bar__link">
               <a href="#">Contact Us</a>
