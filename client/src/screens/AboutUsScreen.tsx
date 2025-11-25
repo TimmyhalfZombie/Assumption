@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import NavigationBar from './components/NavigationBar'
 import { useLoginModal } from './functions/useLoginModal'
 import LoginModal from './components/LoginModal'
@@ -8,6 +8,8 @@ type AboutUsScreenProps = {
 }
 
 const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
+
   useEffect(() => {
     const styleId = 'about-us-screen-styles'
     if (!document.getElementById(styleId)) {
@@ -17,6 +19,17 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
       document.head.appendChild(style)
     }
   }, [])
+
+  useEffect(() => {
+    if (fullscreenImage) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [fullscreenImage])
 
   const {
     isLoginOpen,
@@ -60,6 +73,8 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
                     src="/assets/images/About Us/Saint-Marie-Eugenie.png" 
                     alt="Saint Marie Eugenie" 
                     className="about-us-foundation__image"
+                    onClick={() => setFullscreenImage("/assets/images/About Us/Saint-Marie-Eugenie.png")}
+                    style={{ cursor: 'pointer' }}
                   />
                 </div>
                 
@@ -91,6 +106,8 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
                   src="/assets/images/About Us/old-sisters-assumption-iloilo.png" 
                   alt="The Sisters at the first feast of the Assumption in 1911" 
                   className="about-us-foundation__wide-image"
+                  onClick={() => setFullscreenImage("/assets/images/About Us/old-sisters-assumption-iloilo.png")}
+                  style={{ cursor: 'pointer' }}
                 />
               </div>
             </div>
@@ -137,6 +154,8 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
                   src="/assets/images/About Us/assumption-sisters-present.jpg" 
                   alt="Assumption Sisters" 
                   className="about-us-foundation__wide-image"
+                  onClick={() => setFullscreenImage("/assets/images/About Us/assumption-sisters-present.jpg")}
+                  style={{ cursor: 'pointer' }}
                 />
                 <p className="about-us-image-caption">Present community of Assumption Iloilo</p>
               </div>
@@ -220,6 +239,8 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
                 src="/assets/images/About Us/assumption-sisters.jpg" 
                 alt="Assumption Sisters" 
                 className="about-us-foundation__wide-image"
+                onClick={() => setFullscreenImage("/assets/images/About Us/assumption-sisters.jpg")}
+                style={{ cursor: 'pointer' }}
               />
             </div>
 
@@ -245,6 +266,31 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
           </div>
         </section>
       </main>
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && (
+        <div 
+          className="about-us-fullscreen-modal"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <button 
+            className="about-us-fullscreen-modal__close"
+            onClick={(e) => {
+              e.stopPropagation()
+              setFullscreenImage(null)
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+          <img 
+            src={fullscreenImage} 
+            alt="Fullscreen view"
+            className="about-us-fullscreen-modal__image"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
       <LoginModal
         isOpen={isLoginOpen}
         account={account}
@@ -256,15 +302,7 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
         onSubmit={handleLoginSubmit}
         onCreateAccount={() => {
             closeLogin()
-            const currentHash = window.location.hash.slice(1)
-            if (currentHash === 'home' || !currentHash) {
-              // Already on home, just add signup parameter
-              window.location.search = '?signup=true'
-            } else {
-              // Navigate to home with signup parameter
-              onNavigate('home')
-              window.location.search = '?signup=true'
-            }
+            onNavigate('signup')
         }}
       />
       <footer className="signup-page__footer">© {new Date().getFullYear()} Assumption Iloilo</footer>
@@ -407,6 +445,12 @@ const CSS = `
   height: auto;
   border: 4px solid #f3d654; /* Adding a border consistent with theme */
   box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-us-foundation__image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.25);
 }
 
 .about-us-foundation__text {
@@ -437,6 +481,12 @@ const CSS = `
   height: auto;
   border-radius: 4px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-us-foundation__wide-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
 .about-us-image-caption {
@@ -796,6 +846,57 @@ const CSS = `
   flex-shrink: 0;
 }
 
+/* Fullscreen Image Modal */
+.about-us-fullscreen-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  cursor: pointer;
+}
+
+.about-us-fullscreen-modal__close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 36px;
+  color: #1f1d28;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  transition: all 0.3s ease;
+  font-weight: 300;
+  line-height: 1;
+  padding: 0;
+}
+
+.about-us-fullscreen-modal__close:hover {
+  background: #ffffff;
+  transform: scale(1.1);
+  color: #f3d654;
+}
+
+.about-us-fullscreen-modal__image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  cursor: default;
+  pointer-events: auto;
+}
+
 @media (max-width: 768px) {
   .about-us-hero {
     height: 300px;
@@ -803,6 +904,19 @@ const CSS = `
   
   .about-us-foundation__image-wrapper {
     max-width: 100%;
+  }
+
+  .about-us-fullscreen-modal__close {
+    top: 10px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+  }
+
+  .about-us-fullscreen-modal__image {
+    max-width: 95%;
+    max-height: 95%;
   }
 }
 `

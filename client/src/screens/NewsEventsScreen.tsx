@@ -568,7 +568,7 @@ const NewsEventsScreen = ({ onNavigate }: NewsEventsScreenProps) => {
         onSubmit={handleLoginSubmit}
         onCreateAccount={() => {
            closeLogin()
-           onNavigate('home') 
+           onNavigate('signup')
         }}
       />
       <footer className="signup-page__footer" style={{ marginTop: 'auto', padding: '1.5rem 1rem', textAlign: 'center', background: '#181628', color: '#f6de4f', borderTop: '4px solid #f6de4f', fontFamily: 'var(--font-afacad)' }}>

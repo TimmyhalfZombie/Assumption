@@ -1,4 +1,9 @@
 import { useState } from 'react'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../firebase'
+
+// This suffix makes the ID look like an email to Firebase
+const EMAIL_SUFFIX = "@assumption-library.app"
 
 export const useLoginModal = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false)
@@ -34,16 +39,37 @@ export const useLoginModal = () => {
   const handlePasswordChange = (value: string) => setPassword(value)
 
   const handleLoginSubmit = async () => {
-    if (isSubmitting) {
+    if (isSubmitting || !account || !password) {
       return
     }
 
     try {
       setIsSubmitting(true)
-      // Placeholder login
-      await new Promise((resolve) => setTimeout(resolve, 600))
-    } finally {
+      
+      // 1. Transform School ID to Email format
+      const fakeEmail = `${account}${EMAIL_SUFFIX}`
+
+      // 2. Attempt login with Firebase
+      await signInWithEmailAndPassword(auth, fakeEmail, password)
+      
+      // Store user login state in localStorage (UI only for now)
+      localStorage.setItem('userLoggedIn', 'true')
+      localStorage.setItem('userLibraryCard', account)
+      
+      console.log("Login successful!")
       closeLogin()
+      // You might want to redirect or show a success toast here
+      
+    } catch (error: any) {
+      console.error("Login failed:", error)
+      // Simple error handling
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+        alert("Invalid School ID or Password.")
+      } else {
+        alert("Login failed. Please try again.")
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -62,4 +88,3 @@ export const useLoginModal = () => {
     handleLoginSubmit,
   }
 }
-

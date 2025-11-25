@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import NavigationBar from './components/NavigationBar'
 import { useLoginModal } from './functions/useLoginModal'
 import LoginModal from './components/LoginModal'
@@ -40,6 +40,8 @@ type ProjectsScreenProps = {
 
 // --- 3. MAIN COMPONENT ---
 const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
+
   useEffect(() => {
     const styleId = 'projects-screen-styles'
     if (!document.getElementById(styleId)) {
@@ -49,6 +51,17 @@ const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
       document.head.appendChild(style)
     }
   }, [])
+
+  useEffect(() => {
+    if (fullscreenImage) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [fullscreenImage])
 
   const {
     isLoginOpen,
@@ -91,7 +104,13 @@ const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
           <ul className="levels-grid">
             {content.levels.map((level, idx) => (
               <li key={idx} className="level-card">
-                <img src={level.image} alt={level.title} className="level-card__image" />
+                <img 
+                  src={level.image} 
+                  alt={level.title} 
+                  className="level-card__image"
+                  onClick={() => setFullscreenImage(level.image)}
+                  style={{ cursor: 'pointer' }}
+                />
                 <h3 className="level-card__title">{level.title}</h3>
               </li>
             ))}
@@ -99,6 +118,31 @@ const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
         </section>
 
       </main>
+
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && (
+        <div 
+          className="academics-fullscreen-modal"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <button 
+            className="academics-fullscreen-modal__close"
+            onClick={(e) => {
+              e.stopPropagation()
+              setFullscreenImage(null)
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+          <img 
+            src={fullscreenImage} 
+            alt="Fullscreen view"
+            className="academics-fullscreen-modal__image"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       <LoginModal
         isOpen={isLoginOpen}
@@ -111,15 +155,7 @@ const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
         onSubmit={handleLoginSubmit}
         onCreateAccount={() => {
            closeLogin()
-           const currentHash = window.location.hash.slice(1)
-           if (currentHash === 'home' || !currentHash) {
-             // Already on home, just add signup parameter
-             window.location.search = '?signup=true'
-           } else {
-             // Navigate to home with signup parameter
-             onNavigate('home')
-             window.location.search = '?signup=true'
-           }
+           onNavigate('signup')
         }}
       />
       <footer className="signup-page__footer" style={{ marginTop: 'auto', padding: '1.5rem 1rem', textAlign: 'center', background: '#181628', color: '#f6de4f', borderTop: '4px solid #f6de4f', fontFamily: 'var(--font-afacad)' }}>
@@ -305,6 +341,11 @@ const CSS = `
   height: 400px;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.level-card__image:hover {
+  transform: scale(1.05);
 }
 
 .level-card__title {
@@ -352,6 +393,72 @@ const CSS = `
   .level-card__title {
     font-size: 1.25rem;
     padding: 1.5rem 1rem 1rem;
+  }
+}
+
+/* Fullscreen Image Modal */
+.academics-fullscreen-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  cursor: pointer;
+}
+
+.academics-fullscreen-modal__close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 36px;
+  color: #1f1d28;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  transition: all 0.3s ease;
+  font-weight: 300;
+  line-height: 1;
+  padding: 0;
+}
+
+.academics-fullscreen-modal__close:hover {
+  background: #ffffff;
+  transform: scale(1.1);
+  color: #f3d654;
+}
+
+.academics-fullscreen-modal__image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  cursor: default;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .academics-fullscreen-modal__close {
+    top: 10px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+  }
+
+  .academics-fullscreen-modal__image {
+    max-width: 95%;
+    max-height: 95%;
   }
 }
 `

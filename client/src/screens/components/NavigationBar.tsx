@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import type { User } from 'firebase/auth'
+import { auth } from '../../firebase'
 import CrestLogo from './CrestLogo'
 import { useMenuLock } from '../functions/useMenuLock'
 
@@ -161,6 +164,27 @@ const CSS = `
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-size: 1.05rem;
   letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
+}
+
+.navigation-bar__login--icon {
+  padding: 0 !important;
+  font-size: 1.5rem !important;
+  min-width: 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50% !important;
+  letter-spacing: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .navigation-bar__login:hover {
@@ -313,6 +337,17 @@ const CSS = `
     margin-left: 0;
     box-sizing: border-box;
   }
+
+  .navigation-bar__login--mobile.navigation-bar__login--icon {
+    padding: 0 !important;
+    width: 44px;
+    height: 44px;
+    border-radius: 50% !important;
+    font-size: 1.5rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 `
 
@@ -324,6 +359,8 @@ type NavigationBarProps = {
 }
 
 const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNavigate, currentPage = 'home' }: NavigationBarProps) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
   useEffect(() => {
     const styleId = 'navigation-bar-styles'
     if (!document.getElementById(styleId)) {
@@ -331,6 +368,28 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNav
       style.id = styleId
       style.textContent = CSS
       document.head.appendChild(style)
+    }
+  }, [])
+
+  // Check if user is logged in using Firebase Auth state
+  useEffect(() => {
+    // Listen to Firebase Auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+      if (user) {
+        // User is authenticated - show profile icon
+        setIsLoggedIn(true)
+        // Sync localStorage with auth state
+        localStorage.setItem('userLoggedIn', 'true')
+      } else {
+        // User is not authenticated - show login button
+        setIsLoggedIn(false)
+        localStorage.removeItem('userLoggedIn')
+        localStorage.removeItem('userLibraryCard')
+      }
+    })
+    
+    return () => {
+      unsubscribe()
     }
   }, [])
 
@@ -387,12 +446,12 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNav
               <a href="#">Contact Us</a>
             </li>
           </ul>
-          <button className="navigation-bar__login navigation-bar__login--mobile" type="button" onClick={onLoginClick}>
-            {ctaLabel}
+          <button className={`navigation-bar__login navigation-bar__login--mobile ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={onLoginClick}>
+            {isLoggedIn ? '👤' : ctaLabel}
           </button>
         </nav>
-        <button className="navigation-bar__login navigation-bar__login--desktop" type="button" onClick={onLoginClick}>
-          {ctaLabel}
+        <button className={`navigation-bar__login navigation-bar__login--desktop ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={onLoginClick}>
+          {isLoggedIn ? '👤' : ctaLabel}
         </button>
         <button
           className={`navigation-bar__menu-toggle ${isMenuOpen ? 'navigation-bar__menu-toggle--active' : ''}`}

@@ -313,16 +313,17 @@ const SignupScreen = ({
             </header>
             <div className="signup-section__grid signup-section__grid--two">
               <label>
-                Library card number
+                Library card number / School ID
                 <input
                   type="text"
                   value={values.libraryCardNumber}
                   onChange={(event) => onChange('libraryCardNumber', event.target.value)}
                   required
                   maxLength={32}
+                  placeholder="202X-XXXX"
                 />
                 <span className="signup-required">Required</span>
-                <span className="signup-field__hint">Card number must be between 1 and 32 characters.</span>
+                <span className="signup-field__hint">This will be used for login.</span>
               </label>
               <label>
                 Home library
