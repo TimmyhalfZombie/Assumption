@@ -107,8 +107,10 @@ const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
       />
       
       <header className="contact-hero">
-        <h1 className="contact-hero__title">Contact Us</h1>
-        <p className="contact-hero__subtitle">We'd love to hear from you. Get in touch with us.</p>
+        <div>
+          <h1 className="contact-hero__title">Contact Us</h1>
+          <p className="contact-hero__subtitle">We'd love to hear from you. Get in touch with us.</p>
+        </div>
       </header>
       
       <main className="contact-container">
@@ -262,10 +264,31 @@ const CSS = `
 
 .contact-hero {
   background-color: #1f1d28;
+  background-image: url('/assets/images/Assumption-iloilo-school-campus.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #ffffff;
-  padding: 1.5rem 2rem;
+  padding: 0;
   text-align: center;
   position: relative;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.contact-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 29, 42, 0.6); /* Dark overlay - same as About Us */
+  z-index: 1;
 }
 
 .contact-hero::before {
@@ -279,19 +302,26 @@ const CSS = `
 }
 
 .contact-hero__title {
+  position: relative;
+  color: #ffffff;
   font-family: var(--font-afacad);
   font-weight: 700;
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  text-transform: uppercase;
+  font-size: clamp(3rem, 8vw, 5rem);
   letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
-  color: #ffffff;
+  text-transform: uppercase;
+  text-align: center;
+  z-index: 2;
+  margin: 0;
 }
 
 .contact-hero__subtitle {
-  font-family: var(--font-afacad);
-  font-size: 1.1rem;
+  position: relative;
   color: #f3d654;
+  font-family: var(--font-afacad);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  z-index: 2;
+  margin: 0;
+  margin-top: 0.5rem;
 }
 
 .contact-container {
@@ -398,6 +428,8 @@ const CSS = `
 .contact-form-section {
   margin-top: 3rem;
   padding-top: 2.5rem;
+  padding-left: -8rem;
+  margin-left: -2rem;
   border-top: 2px dashed #e0e0e0;
   /* Makes the form expand to fill any remaining space */
   flex-grow: 1;
@@ -458,10 +490,19 @@ const CSS = `
 
 /* --- MAP CONTAINER (Right Column) --- */
 .map-wrapper {
-  width: 100%;
-  height: 500px;
-  margin-top: 4rem;
+  width: 90%;
+  max-width: 100%;
+  height: 400px;
+  margin: 2rem 0 0 0;
   position: relative;
+}
+
+@media (min-width: 768px) {
+  .map-wrapper {
+    width: 100%;
+    height: 450px;
+    margin-top: 3rem;
+  }
 }
 
 @media (min-width: 1024px) {

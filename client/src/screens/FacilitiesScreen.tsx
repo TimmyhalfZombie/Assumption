@@ -7,7 +7,6 @@ import LoginModal from './components/LoginModal'
 const FACILITIES_CONTENT = {
   hero: {
     title: "School Facilities",
-    subtitle: "Creating an environment conducive to holistic learning and growth."
   },
   video: {
     title: "Virtual Campus Tour",
@@ -129,7 +128,6 @@ const FacilitiesScreen = ({ onNavigate }: FacilitiesScreenProps) => {
       <header className="facilities-hero">
         <div className="facilities-hero__overlay"></div>
         <h1 className="facilities-hero__title">{content.hero.title}</h1>
-        <p className="facilities-hero__subtitle">{content.hero.subtitle}</p>
       </header>
       
       <main className="facilities-container">

@@ -93,13 +93,25 @@ const CSS = `
 .school-map-wrapper {
   width: 100%;
   height: 100%;
-  min-height: 500px;
-  max-height: 500px;
+  min-height: 400px;
   border-radius: 12px;
   overflow: hidden;
   position: relative;
   border: 4px solid #1f1d28;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+@media (min-width: 768px) {
+  .school-map-wrapper {
+    min-height: 450px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .school-map-wrapper {
+    min-height: 500px;
+    max-height: 500px;
+  }
 }
 
 .map-container {
