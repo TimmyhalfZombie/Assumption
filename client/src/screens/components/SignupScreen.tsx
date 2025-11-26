@@ -426,7 +426,7 @@ const SignupScreen = ({
               <span className="signup-section__icon" aria-hidden="true">
                 🔐
               </span>
-              <h2>Password and Verification</h2>
+              <h2>Password</h2>
             </header>
             <div className="signup-section__grid">
               <label>
@@ -449,16 +449,6 @@ const SignupScreen = ({
                 ) : (
                   <span className="signup-required">Required</span>
                 )}
-              </label>
-              <label>
-                Verification
-                <input
-                  type="text"
-                  value={values.verificationCode}
-                  onChange={(event) => onChange('verificationCode', event.target.value)}
-                  required
-                />
-                <span className="signup-required">Required</span>
               </label>
             </div>
           </section>

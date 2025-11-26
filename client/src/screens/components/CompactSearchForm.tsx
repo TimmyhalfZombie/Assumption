@@ -14,15 +14,35 @@ const CSS = `
 }
 
 .compact-dropdown {
-  padding: 0 1.2rem;
+  padding: 0 2.5rem 0 1.2rem;
   height: 48px;
-  border: none;
+  border: 2px solid #1f1d28;
   border-radius: 3px;
   background: white;
-  color: #555;
+  color: #1f1d28;
   font-family: var(--font-afacad);
   font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%231f1d28' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 0.75rem) center;
+  background-size: 12px 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.compact-dropdown:hover {
+  border-color: #f3d654;
+  box-shadow: 0 0 0 2px rgba(243, 214, 84, 0.2);
+}
+
+.compact-dropdown:focus {
+  border-color: #f3d654;
+  box-shadow: 0 0 0 3px rgba(243, 214, 84, 0.3);
   outline: none;
 }
 
@@ -30,11 +50,18 @@ const CSS = `
   flex-grow: 1;
   height: 48px;
   padding: 0 1.2rem;
-  border: none;
+  border: 2px solid #1f1d28;
   border-radius: 3px;
   font-family: var(--font-afacad);
   font-size: 1rem;
   color: #333;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.compact-input:focus {
+  border-color: #f3d654;
+  box-shadow: 0 0 0 3px rgba(243, 214, 84, 0.3);
   outline: none;
 }
 
@@ -60,6 +87,18 @@ const CSS = `
 @media (max-width: 768px) {
   .compact-search-container {
     flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .compact-dropdown,
+  .compact-input,
+  .compact-btn {
+    width: 100%;
+    height: 44px;
+  }
+
+  .compact-dropdown {
+    padding: 0 2.5rem 0 1rem;
   }
 }
 `

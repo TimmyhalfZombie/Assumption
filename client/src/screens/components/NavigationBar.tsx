@@ -349,7 +349,7 @@ const CSS = `
     justify-content: center;
     line-height: 1;
     letter-spacing: 0;
-    margin-top: 0;
+    margin-top: 12rem;
     align-self: center;
   }
 }
@@ -357,12 +357,13 @@ const CSS = `
 
 type NavigationBarProps = {
   onLoginClick: () => void
+  onProfileClick?: () => void
   ctaLabel?: string
   onNavigate: (page: string) => void
   currentPage?: string
 }
 
-const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNavigate, currentPage = 'home' }: NavigationBarProps) => {
+const NavigationBar = ({ onLoginClick, onProfileClick, ctaLabel = 'Log into your account', onNavigate, currentPage = 'home' }: NavigationBarProps) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
@@ -410,6 +411,14 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNav
     setIsMenuOpen(false)
   }
 
+  const handleUserClick = () => {
+    if (isLoggedIn && onProfileClick) {
+      onProfileClick()
+    } else {
+      onLoginClick()
+    }
+  }
+
   return (
     <header className="navigation-bar">
       <div className="navigation-bar__brand">
@@ -451,11 +460,11 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNav
               <span className="navigation-bar__indicator"></span>
             </li>
           </ul>
-          <button className={`navigation-bar__login navigation-bar__login--mobile ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={onLoginClick}>
+          <button className={`navigation-bar__login navigation-bar__login--mobile ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={handleUserClick}>
             {isLoggedIn ? '👤' : ctaLabel}
           </button>
         </nav>
-        <button className={`navigation-bar__login navigation-bar__login--desktop ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={onLoginClick}>
+        <button className={`navigation-bar__login navigation-bar__login--desktop ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={handleUserClick}>
           {isLoggedIn ? '👤' : ctaLabel}
         </button>
         <button

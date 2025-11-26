@@ -8,13 +8,15 @@ const EMAIL_SUFFIX = "@assumption-library.app"
 export const useLoginModal = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false) // New State
+  
   const [account, setAccount] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const openLogin = () => {
     setIsLoginOpen(true)
-    // Always clear account field when opening login modal
+    setIsProfileOpen(false)
     setAccount('')
     setPassword('')
   }
@@ -36,6 +38,16 @@ export const useLoginModal = () => {
     setIsSubmitting(false)
   }
 
+  // New Functions
+  const openProfile = () => {
+    setIsProfileOpen(true)
+    setIsLoginOpen(false)
+  }
+
+  const closeProfile = () => {
+    setIsProfileOpen(false)
+  }
+
   const handleAccountChange = (value: string) => setAccount(value)
 
   const handlePasswordChange = (value: string) => setPassword(value)
@@ -47,24 +59,12 @@ export const useLoginModal = () => {
 
     try {
       setIsSubmitting(true)
-      
-      // 1. Transform School ID to Email format
       const fakeEmail = `${account}${EMAIL_SUFFIX}`
-
-      // 2. Attempt login with Firebase
       await signInWithEmailAndPassword(auth, fakeEmail, password)
-      
-      // Store user login state in localStorage (UI only for now)
-      localStorage.setItem('userLoggedIn', 'true')
-      localStorage.setItem('userLibraryCard', account)
-      
       console.log("Login successful!")
       closeLogin()
-      // You might want to redirect or show a success toast here
-      
     } catch (error: any) {
       console.error("Login failed:", error)
-      // Simple error handling
       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
         alert("Invalid School ID or Password.")
       } else {
@@ -78,6 +78,7 @@ export const useLoginModal = () => {
   return {
     isLoginOpen,
     isSignupOpen,
+    isProfileOpen, // Export
     account,
     password,
     isSubmitting,
@@ -85,6 +86,8 @@ export const useLoginModal = () => {
     closeLogin,
     openSignup,
     closeSignup,
+    openProfile, // Export
+    closeProfile, // Export
     handleAccountChange,
     handlePasswordChange,
     handleLoginSubmit,

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import CompactSearchForm from './components/CompactSearchForm'
 import CrestLogo from './components/CrestLogo'
 import type { Book } from './functions/useLibrarySearch'
@@ -29,6 +29,12 @@ const ShoppingCart = ({ size = 24 }: { size?: number }) => (
 const Bookmark = ({ size = 24 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
+  </svg>
+)
+
+const ChevronDown = ({ size = 20, className = "" }: { size?: number, className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="6 9 12 15 18 9"></polyline>
   </svg>
 )
 
@@ -89,6 +95,47 @@ const RESULTS_CSS = `
   .sidebar {
     margin-top: 0;
     width: 100%;
+    padding: 0;
+    background: transparent;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+    margin-bottom: 0;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sidebar-header:hover {
+    background: #e8e8e8;
+  }
+
+  .sidebar-header-chevron {
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-header-chevron.open {
+    transform: rotate(180deg);
+  }
+
+  .sidebar-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding: 0 1rem;
+    gap: 0;
+  }
+
+  .sidebar-body.open {
+    max-height: 2000px;
+    padding: 1rem;
+    gap: 2rem;
   }
 }
 
@@ -326,6 +373,8 @@ const RESULTS_CSS = `
 `
 
 const LibraryResultsScreen = ({ books, loading, searchTerm, onSearch, onBookSelect }: LibraryResultsScreenProps) => {
+  const [isRefineOpen, setIsRefineOpen] = useState(false)
+
   useEffect(() => {
     if (!document.getElementById('library-results-css')) {
       const style = document.createElement('style')
@@ -358,8 +407,26 @@ const LibraryResultsScreen = ({ books, loading, searchTerm, onSearch, onBookSele
 
       <div className="library-content-results">
         <aside className="sidebar">
-          <div className="sidebar-header">Refine your search</div>
-          <div className="sidebar-body">
+          <div 
+            className="sidebar-header" 
+            onClick={() => setIsRefineOpen(!isRefineOpen)}
+            role="button"
+            aria-expanded={isRefineOpen}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setIsRefineOpen(!isRefineOpen)
+              }
+            }}
+          >
+            <span>Refine your search</span>
+            <ChevronDown 
+              size={20} 
+              className={`sidebar-header-chevron ${isRefineOpen ? 'open' : ''}`}
+            />
+          </div>
+          <div className={`sidebar-body ${isRefineOpen ? 'open' : ''}`}>
             <div className="filter-group">
               <div className="filter-title">Availability</div>
               <span className="filter-item">Limit to records with available items</span>

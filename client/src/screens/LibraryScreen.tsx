@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
+import { auth } from '../firebase'
 import NavigationBar from './components/NavigationBar'
 import LibraryHero from './components/LibraryHero'
 import SearchForm from './components/SearchForm' // Original UI
 import LibraryResultsScreen from './LibraryResultsScreen'
 import LoginModal from './components/LoginModal'
+import UserProfileModal from './components/UserProfileModal'
 import SignupScreen from './components/SignupScreen'
 import { useLibrarySearch } from './functions/useLibrarySearch'
 import type { Book } from './functions/useLibrarySearch'
@@ -48,14 +50,37 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
     setSearchTerm,
     selectedLibrary,
     setSelectedLibrary,
-    handleSubmit,
+    handleSubmit: originalHandleSubmit,
     // API Data & State
     books,
     loading,
     hasSearched,
-    searchBooks,
+    searchBooks: originalSearchBooks,
     restoreSearch
   } = useLibrarySearch()
+
+  // Wrapper to check authentication before searching
+  const checkAuthAndSearch = () => {
+    if (!auth.currentUser) {
+      alert('Please log in to search for books.')
+      openLogin()
+      return false
+    }
+    return true
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (checkAuthAndSearch()) {
+      originalHandleSubmit(event)
+    }
+  }
+
+  const searchBooks = (query: string) => {
+    if (checkAuthAndSearch()) {
+      originalSearchBooks(query)
+    }
+  }
 
   // Restore search results when returning from book detail
   useEffect(() => {
@@ -94,6 +119,9 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
   const [isLoadingAcquisitions, setIsLoadingAcquisitions] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const slideIntervalRef = useRef<number | null>(null)
+
+  // Profile Modal state
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
 
   const handleSignupClose = () => {
     closeSignup()
@@ -251,7 +279,12 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
         />
       ) : (
         <div className="library-screen">
-          <NavigationBar onLoginClick={() => openLogin()} onNavigate={onNavigate} currentPage="home" />
+          <NavigationBar 
+            onLoginClick={() => openLogin()} 
+            onProfileClick={() => setIsProfileModalOpen(true)}
+            onNavigate={onNavigate} 
+            currentPage="home" 
+          />
           
           {/* --- MAIN INTERFACE SWITCH --- */}
           {!hasSearched ? (
@@ -365,6 +398,10 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
         onClose={closeLogin}
         onSubmit={handleLoginSubmit}
         onCreateAccount={openSignup}
+      />
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
       />
     </>
   )

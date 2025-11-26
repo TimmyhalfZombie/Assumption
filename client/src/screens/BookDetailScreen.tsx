@@ -5,8 +5,10 @@ import CrestLogo from './components/CrestLogo'
 import LoginModal from './components/LoginModal'
 import { useLoginModal } from './functions/useLoginModal'
 import type { Book } from './functions/useLibrarySearch'
+import { doc, collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db } from '../firebase' // Import Firebase
 
-// --- INLINE ICONS ---
+// --- INLINE ICONS (Zero External Dependencies) ---
 const Star = ({ size = 24, fill = "none", stroke = "currentColor" }: { size?: number, fill?: string, stroke?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -35,25 +37,11 @@ const Printer = ({ size = 24 }: { size?: number }) => (
   </svg>
 )
 
-const HighlighterIcon = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 11l-6 6v3h3l6-6"></path>
-    <path d="M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L12 4"></path>
-  </svg>
-)
-
 const Download = ({ size = 24 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
     <polyline points="7 10 12 15 17 10"></polyline>
     <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>
-)
-
-const SearchIcon = ({ size = 24 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8"></circle>
-    <path d="m21 21-4.35-4.35"></path>
   </svg>
 )
 
@@ -487,21 +475,16 @@ const CSS = `
   top: 1px; 
 }
 
-.holdings-table-wrapper {
-  border: 1px solid #999;
+.holdings-table-wrapper, .article-content-wrapper, .notes-content-wrapper {
   background: white;
   padding: 1.5rem;
   border-radius: 0 8px 8px 8px;
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
   color: #000000;
-}
-
-.article-content-wrapper, .notes-content-wrapper {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0 8px 8px 8px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  color: #000000;
+  border-top: 1px solid #999;
+  border-right: 1px solid #999;
+  border-bottom: 1px solid #999;
+  border-left: none;
 }
 
 .holdings-table {
@@ -613,14 +596,15 @@ const CSS = `
 /* --- MOBILE --- */
 @media (max-width: 900px) {
   .detail-container {
-    padding: 1.5rem;
-    margin: 1rem auto;
+    padding: 1rem;
+    margin: 0.5rem auto;
     width: 100%;
+    border-radius: 0;
   }
 
   .detail-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
   
   .actions-sidebar {
@@ -629,32 +613,214 @@ const CSS = `
 
   .action-buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 0.5rem;
   }
 
   .view-tabs {
     flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .view-tab {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
   }
   
   .holdings-table {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
+    font-size: 0.85rem;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .holdings-tabs {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .holdings-tab {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .holdings-table-wrapper, 
+  .article-content-wrapper, 
+  .notes-content-wrapper {
+    padding: 1rem;
+    border-radius: 0 4px 4px 4px;
   }
 
   .back-button {
     position: relative;
     top: 0;
     left: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     align-self: flex-start;
     width: fit-content;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
   }
   
   .results-hero-compact {
     align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .book-title-large {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .book-author {
+    font-size: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .book-details {
+    font-size: 0.9rem;
+    gap: 0.75rem;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+
+  .detail-label {
+    min-width: auto;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .detail-value {
+    font-size: 0.9rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+  }
+
+  .book-info-section {
+    gap: 1rem;
+  }
+
+  .book-cover-section {
+    width: 100%;
+  }
+
+  .book-cover-large {
+    max-width: 200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .marc-table {
+    font-size: 0.8rem;
+  }
+
+  .marc-table td {
+    padding: 0.4rem;
+  }
+
+  .isbd-container {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .content-card {
     padding: 1rem;
+  }
+
+  .content-title {
+    font-size: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .content-meta {
+    font-size: 0.85rem;
+  }
+
+  .content-body {
+    font-size: 0.9rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 640px) {
+  .detail-container {
+    padding: 0.75rem;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .book-title-large {
+    font-size: 1.25rem;
+  }
+
+  .book-author {
+    font-size: 0.9rem;
+  }
+
+  .book-details {
+    font-size: 0.85rem;
+  }
+
+  .detail-label {
+    font-size: 0.8rem;
+  }
+
+  .detail-value {
+    font-size: 0.85rem;
+  }
+
+  .holdings-table {
+    font-size: 0.75rem;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.7rem;
+  }
+
+  .holdings-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .holdings-table-wrapper, 
+  .article-content-wrapper, 
+  .notes-content-wrapper {
+    padding: 0.75rem;
+  }
+
+  .view-tab {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .action-btn {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+
+  .marc-table {
+    font-size: 0.7rem;
+  }
+
+  .isbd-container {
+    font-size: 0.9rem;
   }
 }
 `
@@ -667,10 +833,28 @@ type BookDetailScreenProps = {
   searchQuery?: string
 }
 
+interface WorkDetails {
+  description?: string | { value: string };
+  subjects?: string[];
+}
+
+interface Article {
+  id: string;
+  title: string;
+  publication: string;
+  date: string;
+  content: string;
+}
+
 const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = '' }: BookDetailScreenProps) => {
   const [activeView, setActiveView] = useState<'normal' | 'marc' | 'isbd'>('normal')
   const [activeHoldingsTab, setActiveHoldingsTab] = useState<'holdings' | 'article' | 'notes'>('holdings')
-  const [readingArticle, setReadingArticle] = useState(false)
+  
+  const [workDetails, setWorkDetails] = useState<WorkDetails | null>(null)
+  const [loadingDetails, setLoadingDetails] = useState(false)
+  const [dbArticles, setDbArticles] = useState<Article[]>([])
+  
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
 
   useEffect(() => {
     if (!document.getElementById('book-detail-css')) {
@@ -680,6 +864,25 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
       document.head.appendChild(style)
     }
   }, [])
+
+  // --- FETCH OPEN LIBRARY DETAILS ---
+  useEffect(() => {
+    const fetchWorkDetails = async () => {
+      if (!book || !book.id) return;
+      setLoadingDetails(true);
+      try {
+        const response = await fetch(`https://openlibrary.org${book.id}.json`);
+        const data = await response.json();
+        setWorkDetails(data);
+      } catch (error) {
+        console.error("Error fetching work details:", error);
+      } finally {
+        setLoadingDetails(false);
+      }
+    };
+
+    fetchWorkDetails();
+  }, [book]);
 
   const {
     isLoginOpen,
@@ -693,6 +896,40 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
     handleLoginSubmit
   } = useLoginModal()
 
+  // Helper: Check if user is logged in
+  const checkLogin = () => {
+    if (!auth.currentUser) {
+      alert("Please login to perform this action.");
+      openLogin();
+      return false;
+    }
+    return true;
+  }
+
+  // --- FIREBASE ACTIONS ---
+  const saveActionToFirebase = async (collectionName: string, actionData: any) => {
+    if (!checkLogin()) return;
+    
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      await addDoc(collection(db, collectionName), {
+        userId: user.uid,
+        userEmail: user.email, // or School ID if stored differently
+        bookId: book.id,
+        bookTitle: book.title,
+        bookAuthors: book.authors,
+        timestamp: serverTimestamp(),
+        ...actionData
+      });
+      alert(`Successfully saved to ${collectionName}!`);
+    } catch (error) {
+      console.error(`Error saving to ${collectionName}:`, error);
+      alert("Failed to save action. Please try again.");
+    }
+  }
+
   if (!book) {
     return null
   }
@@ -705,21 +942,23 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
   const bookCallNumber = book.callNumber || '823.914 2011'
   const isbn = bookCallNumber.split(' ')[0]?.replace(/\./g, '') || '141314818'
   
+  let descriptionText = "No description available."
+  if (workDetails?.description) {
+    descriptionText = typeof workDetails.description === 'string' 
+      ? workDetails.description 
+      : workDetails.description.value;
+  }
+
   const mockData = {
     isbn: isbn,
     ddc: bookCallNumber,
-    subjects: "Fantasy fiction, English | Potter, Harry (Fictitious character) | Mythology | Wizards in literature",
+    subjects: workDetails?.subjects ? workDetails.subjects.slice(0, 5).join(" | ") : "Fiction, Literature",
     dimensions: "220 pages; 20 x 13 cm",
     location: "Grade School Library",
     collection: "Circulation",
     barcode: `GS${Math.floor(Math.random() * 9000) + 1000}`,
     status: "Available"
   }
-
-  const handlePlacehold = () => alert('Placehold functionality - This would reserve the book for you.')
-  const handlePrint = () => window.print()
-  const handleAddToCart = () => alert('Add to cart functionality - This would add the book to your cart.')
-  const handleUnhighlight = () => alert('Unhighlight functionality - This would remove highlights from the search terms.')
 
   const renderViewContent = () => {
     switch (activeView) {
@@ -760,7 +999,7 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
                     <td className="marc-ind">14</td>
                     <td className="marc-content">
                       <span className="subfield-code">$a</span> {bookTitle} :
-                      <span className="subfield-code">$b</span> a treasury of myths, legends and fascinating facts /
+                      <span className="subfield-code">$b</span> {descriptionText.substring(0, 50)}... /
                       <span className="subfield-code">$c</span> {bookAuthors.join(', ')}.
                     </td>
                   </tr>
@@ -776,7 +1015,7 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
             <h1 className="book-title-large">ISBD View</h1>
             <div className="isbd-container">
               <p>
-                <strong>{bookTitle}</strong> : a treasury of myths, legends and fascinating facts / {bookAuthors.join(', ')}. — London : {bookPublisher}, {bookPublishedDate}.
+                <strong>{bookTitle}</strong> : {descriptionText.substring(0, 50)}... / {bookAuthors.join(', ')}. — London : {bookPublisher}, {bookPublishedDate}.
               </p>
               <p>{mockData.dimensions}.</p>
               <p>ISBN {mockData.isbn}</p>
@@ -852,7 +1091,7 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
 
       <div className="results-hero-compact">
         <button className="back-button" onClick={onBack}>
-          <ArrowLeft size={18} /> Back
+          <ArrowLeft size={18} /> Back to Results
         </button>
         <div className="compact-branding" onClick={onBack}>
           <CrestLogo size={70} />
@@ -904,30 +1143,39 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
             )}
 
             <div className="action-buttons">
-              <button className="action-btn" onClick={handlePlacehold}>
+              <button 
+                className="action-btn" 
+                onClick={() => saveActionToFirebase('holds', { status: 'pending' })}
+              >
                 <span className="action-btn-icon"><Bookmark size={18} /></span>
                 Place Hold
               </button>
-              <button className="action-btn" onClick={handlePrint}>
+              
+              <button 
+                className="action-btn" 
+                onClick={() => {
+                  window.print();
+                  saveActionToFirebase('print_logs', { type: 'detail_view' });
+                }}
+              >
                 <span className="action-btn-icon"><Printer size={18} /></span>
                 Print
               </button>
-              <button className="action-btn" onClick={handleAddToCart}>
+              
+              <button 
+                className="action-btn" 
+                onClick={() => saveActionToFirebase('cart', { quantity: 1 })}
+              >
                 <span className="action-btn-icon"><ShoppingCart size={18} /></span>
                 Add to Cart
               </button>
-              <button className="action-btn" onClick={handleUnhighlight}>
-                <span className="action-btn-icon"><HighlighterIcon size={18} /></span>
-                Unhighlight
-              </button>
-              <button className="action-btn" onClick={() => alert('Save record functionality')}>
+              
+              <button 
+                className="action-btn" 
+                onClick={() => saveActionToFirebase('saved_books', { savedAt: new Date().toISOString() })}
+              >
                 <span className="action-btn-icon"><Download size={18} /></span>
                 Save Record
-                <span className="dropdown-arrow"><ChevronDown size={14} /></span>
-              </button>
-              <button className="action-btn" onClick={() => alert('More searches functionality')}>
-                <span className="action-btn-icon"><SearchIcon size={18} /></span>
-                More Searches
                 <span className="dropdown-arrow"><ChevronDown size={14} /></span>
               </button>
             </div>
@@ -995,37 +1243,45 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
 
             {activeHoldingsTab === 'article' && (
               <div className="article-content-wrapper">
-                 <div className="content-card">
-                    <h3 className="content-title">Related Article: The Mythos of Modern Fantasy</h3>
-                    <div className="content-meta">Published in: Journal of Literary Arts, 2018</div>
-                    <div className="content-body">
-                      This article explores how J.K. Rowling reinterpreted classical mythology to create the wizarding world. It draws parallels between Greek myths and the characters found in the Harry Potter series.
-                    </div>
-                    <button onClick={() => setReadingArticle(true)} style={{marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontWeight: 700, background:'#1f1d28', color:'#fff', border:'none', borderRadius:'4px'}}>Read Full Article</button>
-                 </div>
+                 {dbArticles.length > 0 ? (
+                   dbArticles.map(article => (
+                     <div key={article.id} className="content-card">
+                        <h3 className="content-title">{article.title}</h3>
+                        <div className="content-meta">{article.publication}, {article.date}</div>
+                        <div className="content-body">
+                          {article.content.substring(0, 150)}...
+                        </div>
+                        <button 
+                          onClick={() => setSelectedArticle(article)} 
+                          style={{marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer', fontWeight: 700, background:'#1f1d28', color:'#fff', border:'none', borderRadius:'4px'}}
+                        >
+                          Read Full Article
+                        </button>
+                     </div>
+                   ))
+                 ) : (
+                   <div style={{ padding: '2rem', textAlign: 'center', color: '#000', fontStyle: 'italic' }}>
+                     <p>No related academic articles found in the database for this specific title.</p>
+                     <p style={{fontSize:'0.9rem', marginTop:'0.5rem'}}>(Note: The free Open Library API does not provide full-text journal articles. This tab would typically require a subscription service or manual entry.)</p>
+                   </div>
+                 )}
               </div>
             )}
 
             {activeHoldingsTab === 'notes' && (
               <div className="notes-content-wrapper">
-                <div className="content-card">
-                   <div className="detail-row">
-                      <span className="detail-label">General Note:</span>
-                      <span className="detail-value">"Unofficial and unauthorized"--Cover.</span>
-                   </div>
-                </div>
-                <div className="content-card">
-                   <div className="detail-row">
-                      <span className="detail-label">Bibliography:</span>
-                      <span className="detail-value">Includes bibliographical references (p. 211-214) and index.</span>
-                   </div>
-                </div>
-                <div className="content-card">
-                   <div className="detail-row">
-                      <span className="detail-label">Summary:</span>
-                      <span className="detail-value">Examines the mythology, history, and literature that inspired J.K. Rowling's Harry Potter series.</span>
-                   </div>
-                </div>
+                {loadingDetails ? (
+                  <p>Loading notes...</p>
+                ) : (
+                  <div className="content-card">
+                     <div className="detail-row">
+                        <span className="detail-label">Description / Summary:</span>
+                        <span className="detail-value" style={{lineHeight: '1.6'}}>
+                          {descriptionText}
+                        </span>
+                     </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1033,19 +1289,15 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
       </main>
 
       {/* ARTICLE MODAL */}
-      {readingArticle && (
-        <div className="article-modal-overlay" onClick={() => setReadingArticle(false)}>
+      {selectedArticle && (
+        <div className="article-modal-overlay" onClick={() => setSelectedArticle(null)}>
           <div className="article-modal" onClick={e => e.stopPropagation()}>
-            <button className="close-article" onClick={() => setReadingArticle(false)}>×</button>
-            <h2 className="book-title-large" style={{marginTop: 0, marginBottom: '1rem'}}>The Mythos of Modern Fantasy</h2>
-            <div className="content-meta">Published in: Journal of Literary Arts, 2018</div>
+            <button className="close-article" onClick={() => setSelectedArticle(null)}>×</button>
+            <h2 className="book-title-large" style={{marginTop: 0, marginBottom: '1rem'}}>{selectedArticle.title}</h2>
+            <div className="content-meta">Published in: {selectedArticle.publication}, {selectedArticle.date}</div>
             <hr style={{margin: '1.5rem 0', border: '0', borderTop: '1px solid #ccc'}} />
             <div className="article-text">
-              <p><strong>Abstract:</strong> This study investigates the reimagining of classical mythological frameworks within contemporary fantasy literature, using the Harry Potter series as a primary case study.</p>
-              <p>Fantasy literature has long drawn from the wellspring of ancient mythology. J.K. Rowling's <em>Harry Potter</em> series is no exception, weaving a complex tapestry of allusions that resonate with readers familiar with Greek, Roman, and Celtic legends. From the naming of characters to the structure of the hero's journey, the series repurposes these ancient narratives to address modern themes of prejudice, authority, and moral choice.</p>
-              <p>Consider the character of Remus Lupin. His name alone is a dual reference: 'Remus' alludes to one of the legendary founders of Rome who was suckled by a she-wolf, while 'Lupin' is derived from the Latin <em>lupinus</em>, meaning 'of a wolf'. This linguistic layering enriches the text, rewarding careful readers with foresight into his lycanthropic nature.</p>
-              <p>Furthermore, the series engages with the concept of the 'Hero's Journey' as outlined by Joseph Campbell. Harry's path from the cupboard under the stairs to the final confrontation with Voldemort mirrors the departure, initiation, and return stages of the monomyth. However, Rowling subverts this by emphasizing the collective nature of triumph; Harry rarely succeeds alone, challenging the solitary hero archetype common in classical myths.</p>
-              <p>In conclusion, the series does not merely copy mythology but dialogues with it, suggesting that old stories are not static artifacts but living templates that can be reshaped to reflect contemporary values and concerns.</p>
+              {selectedArticle.content}
             </div>
           </div>
         </div>
@@ -1063,9 +1315,6 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
         onCreateAccount={() => { closeLogin(); onNavigate('signup'); }}
       />
 
-      <footer className="footer">
-        © {new Date().getFullYear()} Assumption Iloilo
-      </footer>
     </div>
   )
 }
