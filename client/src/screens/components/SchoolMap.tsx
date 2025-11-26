@@ -57,6 +57,13 @@ const SchoolMap = () => {
       )
       .addTo(map.current);
 
+    // 4. Resize map to fit container properly
+    map.current.on('load', () => {
+      if (map.current) {
+        map.current.resize();
+      }
+    });
+
   }, []);
 
   return (
@@ -70,7 +77,8 @@ const CSS = `
 .school-map-wrapper {
   width: 100%;
   height: 100%;
-  min-height: 700px;
+  min-height: 500px;
+  max-height: 500px;
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -81,6 +89,11 @@ const CSS = `
 .map-container {
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* Custom Marker Style */

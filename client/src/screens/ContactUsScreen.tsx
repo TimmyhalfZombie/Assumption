@@ -71,7 +71,7 @@ const CSS = `
 .contact-hero {
   background-color: #1f1d28;
   color: #ffffff;
-  padding: 4rem 2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
   position: relative;
 }
@@ -105,17 +105,18 @@ const CSS = `
 .contact-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem clamp(1.25rem, 5vw, 4rem);
+  padding: 1.5rem clamp(1.25rem, 5vw, 4rem);
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 1024px) {
   .contact-container {
     grid-template-columns: 1fr 1.2fr; /* Info Left, Map Right */
     align-items: stretch; /* This ensures both columns are equal height */
+    gap: 1.5rem;
   }
 }
 
@@ -267,15 +268,12 @@ const CSS = `
 /* --- MAP CONTAINER (Right Column) --- */
 .map-wrapper {
   width: 100%;
-  /* Mobile default: fixed height */
-  min-height: 400px; 
+  height: 500px;
 }
 
 @media (min-width: 1024px) {
   .map-wrapper {
-    /* Desktop: Match height of the contact card */
-    height: 100%;
-    min-height: 0; /* Allow it to shrink to match row height if needed */
+    height: 500px;
   }
 }
 `
