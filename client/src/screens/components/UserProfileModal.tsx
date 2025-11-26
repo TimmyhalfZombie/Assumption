@@ -153,6 +153,16 @@ const CSS = `
   background: #eee;
 }
 
+.chevron-rotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s;
+}
+
+.chevron-normal {
+  transform: rotate(0deg);
+  transition: transform 0.3s;
+}
+
 .accordion-content {
   max-height: 0;
   overflow: hidden;
@@ -495,7 +505,7 @@ const UserProfileModal = ({ isOpen, onClose }: UserProfileModalProps) => {
           <div className="accordion-item">
             <div className="accordion-header" onClick={() => toggleAccordion('holds')}>
               <span>My Holds ({holdItems.length})</span>
-              <ChevronDown className={activeTab === 'holds' ? 'rotate-180' : ''} style={{transform: activeTab === 'holds' ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s'}} />
+              <ChevronDown className={activeTab === 'holds' ? 'chevron-rotated' : 'chevron-normal'} />
             </div>
             <div className={`accordion-content ${activeTab === 'holds' ? 'open' : ''}`}>
               <ul className="item-list">
@@ -523,7 +533,7 @@ const UserProfileModal = ({ isOpen, onClose }: UserProfileModalProps) => {
           <div className="accordion-item">
             <div className="accordion-header" onClick={() => toggleAccordion('cart')}>
               <span>My Cart ({cartItems.length})</span>
-              <ChevronDown className={activeTab === 'cart' ? 'rotate-180' : ''} style={{transform: activeTab === 'cart' ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s'}} />
+              <ChevronDown className={activeTab === 'cart' ? 'chevron-rotated' : 'chevron-normal'} />
             </div>
             <div className={`accordion-content ${activeTab === 'cart' ? 'open' : ''}`}>
               <ul className="item-list">

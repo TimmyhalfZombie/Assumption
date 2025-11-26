@@ -5,7 +5,7 @@ import CrestLogo from './components/CrestLogo'
 import LoginModal from './components/LoginModal'
 import { useLoginModal } from './functions/useLoginModal'
 import type { Book } from './functions/useLibrarySearch'
-import { doc, collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../firebase' // Import Firebase
 
 // --- INLINE ICONS (Zero External Dependencies) ---
@@ -852,7 +852,7 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
   
   const [workDetails, setWorkDetails] = useState<WorkDetails | null>(null)
   const [loadingDetails, setLoadingDetails] = useState(false)
-  const [dbArticles, setDbArticles] = useState<Article[]>([])
+  const [dbArticles] = useState<Article[]>([])
   
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
 
