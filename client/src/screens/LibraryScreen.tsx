@@ -72,9 +72,23 @@ const RESULTS_CSS = `
   gap: 2rem;
   align-items: start;
   background: #ffffff;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 0;
   min-height: calc(100vh - 200px);
+}
+
+@media (max-width: 768px) {
+  .library-content-results {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem 0.75rem;
+    min-height: auto;
+  }
+  
+  .sidebar {
+    margin-top: 0;
+    width: 100%;
+  }
 }
 
 .sidebar {
@@ -273,10 +287,58 @@ const RESULTS_CSS = `
 @media (max-width: 900px) {
   .library-content-results {
     grid-template-columns: 1fr;
+    padding: 0.75rem;
+    gap: 1rem;
+    min-height: auto;
+    width: 100%;
+    max-width: 100%;
   }
   .sidebar {
     display: none;
   }
+  
+  .results-main {
+    width: 100%;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  .results-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .book-card {
+    padding: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .book-cover-img {
+    width: 70px;
+    height: 100px;
+  }
+  
+  .results-toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .toolbar-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+  }
+  
+  .toolbar-select {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
 }
 `
 
@@ -498,7 +560,7 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
                       Your search returned {books.length} results
                     </div>
                     <div className="results-toolbar">
-                      <span style={{fontWeight:'700', fontSize:'0.9rem'}}>⚡ Unhighlight</span>
+                      <span style={{fontWeight:'700', fontSize:'0.9rem', color:'#000'}}>⚡ Unhighlight</span>
                       <div style={{ flexGrow: 1 }}></div>
                       <button className="toolbar-btn">Select all</button>
                       <button className="toolbar-btn">Clear all</button>
