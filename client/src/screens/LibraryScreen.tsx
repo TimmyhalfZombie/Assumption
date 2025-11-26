@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import NavigationBar from './components/NavigationBar'
 import LibraryHero from './components/LibraryHero'
 import SearchForm from './components/SearchForm' // Original UI
@@ -9,6 +9,15 @@ import SignupScreen from './components/SignupScreen'
 import { useLibrarySearch } from './functions/useLibrarySearch'
 import { useLoginModal } from './functions/useLoginModal'
 import { useSignupForm } from './functions/useSignupForm'
+
+interface OpenLibraryBook {
+  key: string
+  title: string
+  author_name?: string[]
+  first_publish_year?: number
+  cover_i?: number
+  isbn?: string[]
+}
 
 // --- INLINE ICONS ---
 const Star = ({ size = 24, fill = "none", stroke = "currentColor" }: { size?: number, fill?: string, stroke?: string }) => (
@@ -339,6 +348,190 @@ const RESULTS_CSS = `
     margin-top: 0.5rem;
   }
 }
+
+/* New Acquisitions Slideshow */
+.acquisitions-slideshow {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  padding: 2rem 0;
+}
+
+.acquisitions-slideshow__container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.acquisitions-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(31, 29, 40, 0.9);
+  color: #f3d654;
+  border: 2px solid #f3d654;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.acquisitions-arrow--left {
+  left: 1rem;
+}
+
+.acquisitions-arrow--right {
+  right: 1rem;
+}
+
+.acquisitions-arrow:hover {
+  background: #1f1d28;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.acquisitions-arrow:active {
+  transform: translateY(-50%);
+}
+
+.acquisitions-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+.acquisitions-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.acquisitions-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.acquisitions-book {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  max-width: 800px;
+  width: 90%;
+}
+
+.acquisitions-book__cover {
+  width: 150px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.acquisitions-book__cover-placeholder {
+  width: 150px;
+  height: 220px;
+  background: #1f1d28;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f3d654;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.acquisitions-book__info {
+  flex: 1;
+  color: #ffffff;
+}
+
+.acquisitions-book__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.acquisitions-book__author {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  margin: 0.5rem 0;
+  color: #f3d654;
+  font-weight: 600;
+}
+
+.acquisitions-book__year {
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.acquisitions-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.acquisitions-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #f3d654;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 0;
+}
+
+.acquisitions-indicator:hover {
+  background: rgba(243, 214, 84, 0.5);
+}
+
+.acquisitions-indicator.active {
+  background: #f3d654;
+}
+
+@media (max-width: 768px) {
+  .acquisitions-book {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  
+  .acquisitions-book__cover,
+  .acquisitions-book__cover-placeholder {
+    width: 120px;
+    height: 180px;
+  }
+  
+  .acquisitions-slideshow__container {
+    height: auto;
+    min-height: 400px;
+  }
 }
 `
 
@@ -398,6 +591,12 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
     resetForm,
   } = useSignupForm()
 
+  // New Acquisitions state
+  const [newAcquisitions, setNewAcquisitions] = useState<OpenLibraryBook[]>([])
+  const [isLoadingAcquisitions, setIsLoadingAcquisitions] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const slideIntervalRef = useRef<number | null>(null)
+
   const handleSignupClose = () => {
     closeSignup()
     resetForm()
@@ -437,6 +636,100 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [openSignup])
+
+  // Fetch newest books from OpenLibrary
+  useEffect(() => {
+    const fetchNewAcquisitions = async () => {
+      if (searchTerm) {
+        setIsLoadingAcquisitions(false)
+        setNewAcquisitions([])
+        return
+      }
+
+      setIsLoadingAcquisitions(true)
+      try {
+        // Use a simpler query - search for popular books
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+        
+        const response = await fetch(
+          `https://openlibrary.org/search.json?q=subject:fiction&limit=100&fields=key,title,author_name,first_publish_year,cover_i,isbn`,
+          { signal: controller.signal }
+        )
+        
+        clearTimeout(timeoutId)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        if (data.docs && data.docs.length > 0) {
+          // Filter to get books with covers, sort by year (newest first), and limit to 7
+          const allBooksWithCovers = data.docs
+            .filter((book: OpenLibraryBook) => book.cover_i && book.title)
+            .sort((a: OpenLibraryBook, b: OpenLibraryBook) => 
+              (b.first_publish_year || 0) - (a.first_publish_year || 0)
+            )
+            .slice(0, 7)
+          
+          setNewAcquisitions(allBooksWithCovers)
+          setIsLoadingAcquisitions(false)
+        } else {
+          setNewAcquisitions([])
+          setIsLoadingAcquisitions(false)
+        }
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          console.error('Request timeout')
+        } else {
+          console.error('Error fetching new acquisitions:', error)
+        }
+        setNewAcquisitions([])
+        setIsLoadingAcquisitions(false)
+      }
+    }
+
+    fetchNewAcquisitions()
+  }, [searchTerm])
+
+  // Auto-rotate slideshow
+  useEffect(() => {
+    if (newAcquisitions.length > 0 && !searchTerm) {
+      slideIntervalRef.current = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+      }, 4000) // Change slide every 4 seconds
+    }
+
+    return () => {
+      if (slideIntervalRef.current) {
+        clearInterval(slideIntervalRef.current)
+      }
+    }
+  }, [newAcquisitions.length, searchTerm])
+
+  const goToNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+    // Reset the auto-rotate timer when manually navigating
+    if (slideIntervalRef.current) {
+      clearInterval(slideIntervalRef.current)
+    }
+    slideIntervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+    }, 4000)
+  }
+
+  const goToPreviousSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + newAcquisitions.length) % newAcquisitions.length)
+    // Reset the auto-rotate timer when manually navigating
+    if (slideIntervalRef.current) {
+      clearInterval(slideIntervalRef.current)
+    }
+    slideIntervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+    }, 4000)
+  }
 
   const handleSignupNavigate = (page: string) => {
     if (page === 'home') {
@@ -504,7 +797,66 @@ const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
               </section>
               <section className="library-screen__acquisitions">
                 <h2>New Acquisitions</h2>
-                <p>Featured titles will appear here.</p>
+                {isLoadingAcquisitions ? (
+                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Loading new acquisitions...</p>
+                ) : newAcquisitions.length > 0 ? (
+                  <div className="acquisitions-slideshow">
+                    <div className="acquisitions-slideshow__container">
+                      <button 
+                        className="acquisitions-arrow acquisitions-arrow--left"
+                        onClick={goToPreviousSlide}
+                        aria-label="Previous book"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m15 18-6-6 6-6"></path>
+                        </svg>
+                      </button>
+                      {newAcquisitions.map((book, index) => (
+                        <div
+                          key={book.key}
+                          className={`acquisitions-slide ${index === currentSlide ? 'active' : ''}`}
+                        >
+                          <div className="acquisitions-book">
+                            {book.cover_i ? (
+                              <img
+                                src={`https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`}
+                                alt={book.title}
+                                className="acquisitions-book__cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = '/assets/images/assumption-logo.png'
+                                }}
+                              />
+                            ) : (
+                              <div className="acquisitions-book__cover-placeholder">
+                                <span>No Cover</span>
+                              </div>
+                            )}
+                            <div className="acquisitions-book__info">
+                              <h3 className="acquisitions-book__title">{book.title}</h3>
+                              {book.author_name && book.author_name.length > 0 && (
+                                <p className="acquisitions-book__author">by {book.author_name[0]}</p>
+                              )}
+                              {book.first_publish_year && (
+                                <p className="acquisitions-book__year">{book.first_publish_year}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <button 
+                        className="acquisitions-arrow acquisitions-arrow--right"
+                        onClick={goToNextSlide}
+                        aria-label="Next book"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m9 18 6-6-6-6"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>No new acquisitions available at this time.</p>
+                )}
               </section>
             </main>
           ) : (
