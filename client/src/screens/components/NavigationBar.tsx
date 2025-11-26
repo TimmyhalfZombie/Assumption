@@ -446,8 +446,9 @@ const NavigationBar = ({ onLoginClick, ctaLabel = 'Log into your account', onNav
               <a href="#" onClick={handleNavClick('facilities')}>School Facilities</a>
               <span className="navigation-bar__indicator"></span>
             </li>
-            <li className="navigation-bar__link">
-              <a href="#">Contact Us</a>
+            <li className={`navigation-bar__link ${currentPage === 'contact' ? 'navigation-bar__link--active' : ''}`}>
+              <a href="#" onClick={handleNavClick('contact')}>Contact Us</a>
+              <span className="navigation-bar__indicator"></span>
             </li>
           </ul>
           <button className={`navigation-bar__login navigation-bar__login--mobile ${isLoggedIn ? 'navigation-bar__login--icon' : ''}`} type="button" onClick={onLoginClick}>

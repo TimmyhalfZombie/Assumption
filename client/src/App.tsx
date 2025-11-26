@@ -9,6 +9,7 @@ import AdmissionScreen from './screens/AdmissionScreen'
 import AcademicScreen from './screens/AcademicScreen'
 import FacilitiesScreen from './screens/FacilitiesScreen'
 import NewsEventsScreen from './screens/NewsEventsScreen'
+import ContactUsScreen from './screens/ContactUsScreen'
 import SignupScreen from './screens/components/SignupScreen'
 import { useSignupForm } from './screens/functions/useSignupForm'
 import { useLoginModal } from './screens/functions/useLoginModal'
@@ -17,7 +18,7 @@ const App = () => {
   // Get initial route from URL hash, default to 'home'
   const getRouteFromHash = () => {
     const hash = window.location.hash.slice(1) // Remove the # symbol
-    const validRoutes = ['home', 'about', 'admissions', 'academics', 'facilities', 'news', 'signup']
+    const validRoutes = ['home', 'about', 'admissions', 'academics', 'facilities', 'news', 'contact', 'signup']
     return validRoutes.includes(hash) ? hash : 'home'
   }
 
@@ -98,6 +99,10 @@ const App = () => {
 
   if (currentRoute === 'news') {
     return <NewsEventsScreen onNavigate={handleNavigate} />
+  }
+
+  if (currentRoute === 'contact') {
+    return <ContactUsScreen onNavigate={handleNavigate} />
   }
 
   if (currentRoute === 'signup') {

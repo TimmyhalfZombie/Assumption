@@ -250,7 +250,7 @@ const AdmissionsScreen = ({ onNavigate }: AdmissionsScreenProps) => {
           </div>
 
         </div>
-      </div>
+        </div>
       </main>
 
       <LoginModal

@@ -365,7 +365,7 @@ const CSS = `
 @media (min-width: 1024px) {
   .projects-section-title {
     font-size: 2.5rem;
-  }
+}
 
   .projects-text,
   .project-card__desc {
@@ -393,7 +393,7 @@ const CSS = `
   .level-card__title {
     font-size: 1.25rem;
     padding: 1.5rem 1rem 1rem;
-  }
+    }
 }
 
 /* Fullscreen Image Modal */
