@@ -58,6 +58,148 @@ const CONTACT_CONTENT = {
   ]
 }
 
+type ContactUsScreenProps = {
+  onNavigate: (page: string) => void
+}
+
+const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
+  useEffect(() => {
+    const styleId = 'contact-screen-styles'
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style')
+      style.id = styleId
+      style.textContent = CSS
+      document.head.appendChild(style)
+    }
+  }, [])
+
+  const {
+    isLoginOpen,
+    account,
+    password,
+    isSubmitting,
+    openLogin,
+    closeLogin,
+    handleAccountChange,
+    handlePasswordChange,
+    handleLoginSubmit
+  } = useLoginModal()
+
+  return (
+    <div className="contact-screen">
+      <NavigationBar 
+        onLoginClick={openLogin} 
+        onNavigate={onNavigate} 
+        currentPage="contact" 
+      />
+      
+      <header className="contact-hero">
+        <h1 className="contact-hero__title">Contact Us</h1>
+        <p className="contact-hero__subtitle">We'd love to hear from you. Get in touch with us.</p>
+      </header>
+      
+      <main className="contact-container">
+        
+        {/* --- LEFT COLUMN: DETAILS & FORM --- */}
+        <div className="contact-info-card">
+          <h2 className="contact-section-title">Contact Details</h2>
+          
+          <div className="contact-details">
+            {/* Address */}
+            <div className="contact-item">
+              <div className="contact-icon-box">
+                <MapPin size={22} />
+              </div>
+              <div className="contact-text-group">
+                <span className="contact-label">Our Location</span>
+                <span className="contact-value">{CONTACT_CONTENT.address.line1}</span>
+                <span className="contact-value">{CONTACT_CONTENT.address.line2}</span>
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="contact-item">
+              <div className="contact-icon-box">
+                <Phone size={22} />
+              </div>
+              <div className="contact-text-group">
+                <span className="contact-label">Phone Numbers</span>
+                {CONTACT_CONTENT.phone.map((line, idx) => (
+                  <span key={idx} className="contact-value">{line}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Fax */}
+            <div className="contact-item">
+              <div className="contact-icon-box">
+                <Printer size={22} />
+              </div>
+              <div className="contact-text-group">
+                <span className="contact-label">Fax Number</span>
+                <span className="contact-value">{CONTACT_CONTENT.fax}</span>
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="contact-item">
+              <div className="contact-icon-box">
+                <Mail size={22} />
+              </div>
+              <div className="contact-text-group">
+                <span className="contact-label">Email Addresses</span>
+                {CONTACT_CONTENT.emails.map((email, idx) => (
+                  <a key={idx} href={`mailto:${email}`} className="contact-email-link contact-value">
+                    {email}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Message Form */}
+          <div className="contact-form-section">
+            <h3 className="contact-label" style={{ marginBottom: '1.5rem' }}>Send us a message</h3>
+            <form onSubmit={(e) => e.preventDefault()} style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+              <input type="text" placeholder="Your Name" className="contact-input" required />
+              <input type="email" placeholder="Your Email" className="contact-input" required />
+              <textarea placeholder="How can we help you?" className="contact-textarea" required></textarea>
+              <button className="contact-submit-btn">
+                <Send size={18} /> Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* --- RIGHT COLUMN: MAP SPACE --- */}
+        <div className="map-wrapper">
+          {/* This Component holds the actual map logic */}
+          <SchoolMap />
+        </div>
+
+      </main>
+
+      <LoginModal
+        isOpen={isLoginOpen}
+        account={account}
+        password={password}
+        isSubmitting={isSubmitting}
+        onAccountChange={handleAccountChange}
+        onPasswordChange={handlePasswordChange}
+        onClose={closeLogin}
+        onSubmit={handleLoginSubmit}
+        onCreateAccount={() => {
+           closeLogin()
+           onNavigate('home') 
+        }}
+      />
+      <footer className="signup-page__footer" style={{ marginTop: 'auto', padding: '1.5rem 1rem', textAlign: 'center', background: '#181628', color: '#f6de4f', borderTop: '4px solid #f6de4f', fontFamily: 'var(--font-afacad)' }}>
+        © {new Date().getFullYear()} Assumption Iloilo
+      </footer>
+    </div>
+  )
+}
+
 // --- CSS STYLES ---
 const CSS = `
 .contact-screen {
@@ -125,7 +267,6 @@ const CSS = `
   background: #f8f9fa;
   padding: 2.5rem;
   border-radius: 12px;
-  border-left: 5px solid #1f1d28;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   /* Ensure it fills the grid cell */
   height: 100%;
@@ -269,155 +410,17 @@ const CSS = `
 .map-wrapper {
   width: 100%;
   height: 500px;
+  margin-top: 4rem;
 }
 
 @media (min-width: 1024px) {
   .map-wrapper {
     height: 500px;
+    margin-top: 0;
+    align-self: start;
+    padding-top: 4rem;
   }
 }
 `
-
-type ContactUsScreenProps = {
-  onNavigate: (page: string) => void
-}
-
-const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
-  useEffect(() => {
-    const styleId = 'contact-screen-styles'
-    if (!document.getElementById(styleId)) {
-      const style = document.createElement('style')
-      style.id = styleId
-      style.textContent = CSS
-      document.head.appendChild(style)
-    }
-  }, [])
-
-  const {
-    isLoginOpen,
-    account,
-    password,
-    isSubmitting,
-    openLogin,
-    closeLogin,
-    handleAccountChange,
-    handlePasswordChange,
-    handleLoginSubmit
-  } = useLoginModal()
-
-  return (
-    <div className="contact-screen">
-      <NavigationBar 
-        onLoginClick={openLogin} 
-        onNavigate={onNavigate} 
-        currentPage="contact" 
-      />
-      
-      <header className="contact-hero">
-        <h1 className="contact-hero__title">Contact Us</h1>
-        <p className="contact-hero__subtitle">We'd love to hear from you. Get in touch with us.</p>
-      </header>
-      
-      <main className="contact-container">
-        
-        {/* --- LEFT COLUMN: DETAILS & FORM --- */}
-        <div className="contact-info-card">
-          <h2 className="contact-section-title">Contact Details</h2>
-          
-          <div className="contact-details">
-            {/* Address */}
-            <div className="contact-item">
-              <div className="contact-icon-box">
-                <MapPin size={22} />
-              </div>
-              <div className="contact-text-group">
-                <span className="contact-label">Our Location</span>
-                <span className="contact-value">{CONTACT_CONTENT.address.line1}</span>
-                <span className="contact-value">{CONTACT_CONTENT.address.line2}</span>
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div className="contact-item">
-              <div className="contact-icon-box">
-                <Phone size={22} />
-              </div>
-              <div className="contact-text-group">
-                <span className="contact-label">Phone Numbers</span>
-                {CONTACT_CONTENT.phone.map((line, idx) => (
-                  <span key={idx} className="contact-value">{line}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* Fax */}
-            <div className="contact-item">
-              <div className="contact-icon-box">
-                <Printer size={22} />
-              </div>
-              <div className="contact-text-group">
-                <span className="contact-label">Fax Number</span>
-                <span className="contact-value">{CONTACT_CONTENT.fax}</span>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="contact-item">
-              <div className="contact-icon-box">
-                <Mail size={22} />
-              </div>
-              <div className="contact-text-group">
-                <span className="contact-label">Email Addresses</span>
-                {CONTACT_CONTENT.emails.map((email, idx) => (
-                  <a key={idx} href={`mailto:${email}`} className="contact-email-link contact-value">
-                    {email}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Message Form */}
-          <div className="contact-form-section">
-            <h3 className="contact-label" style={{ marginBottom: '1.5rem' }}>Send us a message</h3>
-            <form onSubmit={(e) => e.preventDefault()} style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-              <input type="text" placeholder="Your Name" className="contact-input" required />
-              <input type="email" placeholder="Your Email" className="contact-input" required />
-              <textarea placeholder="How can we help you?" className="contact-textarea" required></textarea>
-              <button className="contact-submit-btn">
-                <Send size={18} /> Send Message
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* --- RIGHT COLUMN: MAP SPACE --- */}
-        <div className="map-wrapper">
-          {/* This Component holds the actual map logic */}
-          <SchoolMap />
-        </div>
-
-      </main>
-
-      <LoginModal
-        isOpen={isLoginOpen}
-        account={account}
-        password={password}
-        isSubmitting={isSubmitting}
-        onAccountChange={handleAccountChange}
-        onPasswordChange={handlePasswordChange}
-        onClose={closeLogin}
-        onSubmit={handleLoginSubmit}
-        onCreateAccount={() => {
-           closeLogin()
-           onNavigate('home') 
-        }}
-      />
-      <footer className="signup-page__footer" style={{ marginTop: 'auto', padding: '1.5rem 1rem', textAlign: 'center', background: '#181628', color: '#f6de4f', borderTop: '4px solid #f6de4f', fontFamily: 'var(--font-afacad)' }}>
-        © {new Date().getFullYear()} Assumption Iloilo
-      </footer>
-    </div>
-  )
-}
 
 export default ContactUsScreen
