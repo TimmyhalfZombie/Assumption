@@ -27,6 +27,7 @@ const App = () => {
   const [currentRoute, setCurrentRoute] = useState(getRouteFromHash)
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const [lastSearchQuery, setLastSearchQuery] = useState<string>('')
+  const [lastSearchBooks, setLastSearchBooks] = useState<Book[]>([])
 
   // --- SECURITY LISTENER (Added) ---
   useEffect(() => {
@@ -90,15 +91,17 @@ const App = () => {
   }
 
   // Handle book selection from LibraryScreen
-  const handleBookSelect = (book: Book, searchQuery: string) => {
+  const handleBookSelect = (book: Book, searchQuery: string, searchBooks: Book[]) => {
     console.log('App: handleBookSelect called with book:', book)
     setSelectedBook(book)
     setLastSearchQuery(searchQuery)
+    setLastSearchBooks(searchBooks)
   }
 
   // Handle back from BookDetailScreen
   const handleBackFromBookDetail = () => {
     setSelectedBook(null)
+    // Keep lastSearchQuery and lastSearchBooks so LibraryScreen can restore the results view
   }
 
   // Handle search from BookDetailScreen
@@ -154,6 +157,7 @@ const App = () => {
       onNavigate={handleNavigate}
       onBookSelect={handleBookSelect}
       initialSearchQuery={lastSearchQuery}
+      initialSearchBooks={lastSearchBooks}
     />
   )
 }

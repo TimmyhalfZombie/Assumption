@@ -41,8 +41,8 @@ const CSS = `
 .compact-btn {
   height: 48px;
   padding: 0 2rem;
-  background: #1a1829;
-  color: white;
+  background: #f3d654;
+  color: #1a1829;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 3px;
   font-weight: 700;
@@ -53,8 +53,8 @@ const CSS = `
 }
 
 .compact-btn:hover {
-  background: #f3d654;
-  color: #1f1d28;
+  background: #1a1829;
+  color: #ffffffff;
 }
 
 @media (max-width: 768px) {

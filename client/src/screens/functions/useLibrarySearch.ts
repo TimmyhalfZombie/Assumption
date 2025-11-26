@@ -37,6 +37,15 @@ export const useLibrarySearch = () => {
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
+  
+  // Function to restore search state (for going back from book detail)
+  const restoreSearch = (query: string, previousBooks: Book[]) => {
+    if (query && previousBooks.length > 0) {
+      setSearchTerm(query)
+      setBooks(previousBooks)
+      setHasSearched(true)
+    }
+  }
 
   // --- API Search Function ---
   const searchBooks = async (query: string) => {
@@ -96,6 +105,7 @@ export const useLibrarySearch = () => {
     books,
     loading,
     hasSearched,
-    searchBooks
+    searchBooks,
+    restoreSearch
   }
 }
