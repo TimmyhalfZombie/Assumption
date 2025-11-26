@@ -64,6 +64,22 @@ const SchoolMap = () => {
       }
     });
 
+    // 5. Handle window resize for fullscreen mode
+    const handleResize = () => {
+      if (map.current) {
+        map.current.resize();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
   }, []);
 
   return (

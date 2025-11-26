@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import NavigationBar from './components/NavigationBar'
 import SchoolMap from './components/SchoolMap'
 import { useLoginModal } from './functions/useLoginModal'
@@ -63,6 +63,8 @@ type ContactUsScreenProps = {
 }
 
 const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
+  const [isMapFullscreen, setIsMapFullscreen] = useState(false)
+
   useEffect(() => {
     const styleId = 'contact-screen-styles'
     if (!document.getElementById(styleId)) {
@@ -72,6 +74,17 @@ const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
       document.head.appendChild(style)
     }
   }, [])
+
+  useEffect(() => {
+    if (isMapFullscreen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMapFullscreen])
 
   const {
     isLoginOpen,
@@ -174,10 +187,47 @@ const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
         {/* --- RIGHT COLUMN: MAP SPACE --- */}
         <div className="map-wrapper">
           {/* This Component holds the actual map logic */}
-          <SchoolMap />
+          <div className="map-with-button">
+            <SchoolMap />
+            <button 
+              className="map-fullscreen-btn"
+              onClick={() => setIsMapFullscreen(true)}
+              aria-label="View map in fullscreen"
+              title="View map in fullscreen"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+              </svg>
+            </button>
+          </div>
         </div>
 
       </main>
+
+      {/* Fullscreen Map Modal */}
+      {isMapFullscreen && (
+        <div 
+          className="map-fullscreen-modal"
+          onClick={() => setIsMapFullscreen(false)}
+        >
+          <button 
+            className="map-fullscreen-modal__close"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsMapFullscreen(false)
+            }}
+            aria-label="Close fullscreen"
+          >
+            ×
+          </button>
+          <div 
+            className="map-fullscreen-modal__content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SchoolMap />
+          </div>
+        </div>
+      )}
 
       <LoginModal
         isOpen={isLoginOpen}
@@ -411,6 +461,7 @@ const CSS = `
   width: 100%;
   height: 500px;
   margin-top: 4rem;
+  position: relative;
 }
 
 @media (min-width: 1024px) {
@@ -420,6 +471,104 @@ const CSS = `
     align-self: start;
     padding-top: 4rem;
   }
+}
+
+.map-with-button {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fullscreen Button */
+.map-fullscreen-btn {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 999;
+  background: rgba(31, 29, 40, 0.9);
+  color: #f3d654;
+  border: 2px solid #f3d654;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.map-fullscreen-btn:hover {
+  background: #1f1d28;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.map-fullscreen-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Fullscreen Map Modal */
+.map-fullscreen-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.map-fullscreen-modal__close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(31, 29, 40, 0.9);
+  color: #f3d654;
+  border: 2px solid #f3d654;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.map-fullscreen-modal__close:hover {
+  background: #1f1d28;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.map-fullscreen-modal__content {
+  width: 100%;
+  height: 100%;
+  max-width: 95vw;
+  max-height: 95vh;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.map-fullscreen-modal__content .school-map-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  border: none;
+  border-radius: 0;
 }
 `
 
