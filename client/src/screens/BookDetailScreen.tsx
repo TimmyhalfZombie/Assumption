@@ -487,8 +487,16 @@ const CSS = `
   top: 1px; 
 }
 
-.holdings-table-wrapper, .article-content-wrapper, .notes-content-wrapper {
+.holdings-table-wrapper {
   border: 1px solid #999;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0 8px 8px 8px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  color: #000000;
+}
+
+.article-content-wrapper, .notes-content-wrapper {
   background: white;
   padding: 1.5rem;
   border-radius: 0 8px 8px 8px;
