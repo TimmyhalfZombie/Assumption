@@ -7,6 +7,7 @@ import CrestLogo from './components/CrestLogo'
 import LoginModal from './components/LoginModal'
 import SignupScreen from './components/SignupScreen'
 import { useLibrarySearch } from './functions/useLibrarySearch'
+import type { Book } from './functions/useLibrarySearch'
 import { useLoginModal } from './functions/useLoginModal'
 import { useSignupForm } from './functions/useSignupForm'
 
@@ -39,6 +40,471 @@ const Bookmark = ({ size = 24 }: { size?: number }) => (
     <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
   </svg>
 )
+
+
+type LibraryScreenProps = {
+  onNavigate: (page: string) => void
+  onBookSelect?: (book: Book, searchQuery: string) => void
+  initialSearchQuery?: string
+}
+
+const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '' }: LibraryScreenProps) => {
+  // Inject Results CSS (Home CSS is likely global or in components)
+  useEffect(() => {
+    if (!document.getElementById('library-results-css')) {
+      const style = document.createElement('style')
+      style.id = 'library-results-css'
+      style.textContent = RESULTS_CSS
+      document.head.appendChild(style)
+    }
+  }, [])
+
+  const {
+    catalogOptions,
+    libraryOptions,
+    selectedCatalog,
+    setSelectedCatalog,
+    searchTerm,
+    setSearchTerm,
+    selectedLibrary,
+    setSelectedLibrary,
+    handleSubmit,
+    // API Data & State
+    books,
+    loading,
+    hasSearched,
+    searchBooks
+  } = useLibrarySearch()
+
+  const {
+    isLoginOpen,
+    isSignupOpen,
+    account,
+    password,
+    isSubmitting,
+    openLogin,
+    closeLogin,
+    openSignup,
+    closeSignup,
+    handleAccountChange,
+    handlePasswordChange,
+    handleLoginSubmit,
+  } = useLoginModal()
+
+  const {
+    values: signupValues,
+    isSubmitting: signupSubmitting,
+    isPasswordMismatch,
+    updateValue,
+    submitForm: submitSignup,
+    resetForm,
+  } = useSignupForm()
+
+  // New Acquisitions state
+  const [newAcquisitions, setNewAcquisitions] = useState<OpenLibraryBook[]>([])
+  const [isLoadingAcquisitions, setIsLoadingAcquisitions] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const slideIntervalRef = useRef<number | null>(null)
+
+  const handleSignupClose = () => {
+    closeSignup()
+    resetForm()
+  }
+
+  const handleSignupSubmit = async () => {
+    await submitSignup()
+    handleSignupClose()
+    openLogin()
+  }
+
+  useEffect(() => {
+    if (isLoginOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isLoginOpen])
+
+  useEffect(() => {
+    const checkAndOpenSignup = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('signup') === 'true') {
+        openSignup()
+        urlParams.delete('signup')
+        const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash
+        window.history.replaceState({}, '', newUrl)
+      }
+    }
+    checkAndOpenSignup()
+    const handleHashChange = () => {
+      checkAndOpenSignup()
+    }
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [openSignup])
+
+  // Fetch newest books from OpenLibrary
+  useEffect(() => {
+    const fetchNewAcquisitions = async () => {
+      if (searchTerm) {
+        setIsLoadingAcquisitions(false)
+        setNewAcquisitions([])
+        return
+      }
+
+      setIsLoadingAcquisitions(true)
+      try {
+        // Use a simpler query - search for popular books
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+        
+        const response = await fetch(
+          `https://openlibrary.org/search.json?q=subject:fiction&limit=100&fields=key,title,author_name,first_publish_year,cover_i,isbn`,
+          { signal: controller.signal }
+        )
+        
+        clearTimeout(timeoutId)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        if (data.docs && data.docs.length > 0) {
+          // Filter to get books with covers, sort by year (newest first), and limit to 7
+          const allBooksWithCovers = data.docs
+            .filter((book: OpenLibraryBook) => book.cover_i && book.title)
+            .sort((a: OpenLibraryBook, b: OpenLibraryBook) => 
+              (b.first_publish_year || 0) - (a.first_publish_year || 0)
+            )
+            .slice(0, 7)
+          
+          setNewAcquisitions(allBooksWithCovers)
+          setIsLoadingAcquisitions(false)
+        } else {
+          setNewAcquisitions([])
+          setIsLoadingAcquisitions(false)
+        }
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          console.error('Request timeout')
+        } else {
+          console.error('Error fetching new acquisitions:', error)
+        }
+        setNewAcquisitions([])
+        setIsLoadingAcquisitions(false)
+      }
+    }
+
+    fetchNewAcquisitions()
+  }, [searchTerm])
+
+  // Auto-rotate slideshow
+  useEffect(() => {
+    if (newAcquisitions.length > 0 && !searchTerm) {
+      slideIntervalRef.current = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+      }, 4000) // Change slide every 4 seconds
+    }
+
+    return () => {
+      if (slideIntervalRef.current) {
+        clearInterval(slideIntervalRef.current)
+      }
+    }
+  }, [newAcquisitions.length, searchTerm])
+
+  const goToNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+    // Reset the auto-rotate timer when manually navigating
+    if (slideIntervalRef.current) {
+      clearInterval(slideIntervalRef.current)
+    }
+    slideIntervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+    }, 4000)
+  }
+
+  const goToPreviousSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + newAcquisitions.length) % newAcquisitions.length)
+    // Reset the auto-rotate timer when manually navigating
+    if (slideIntervalRef.current) {
+      clearInterval(slideIntervalRef.current)
+    }
+    slideIntervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
+    }, 4000)
+  }
+
+  const handleSignupNavigate = (page: string) => {
+    if (page === 'home') {
+      closeSignup()
+      resetForm()
+    }
+    onNavigate(page)
+  }
+
+  // Helper to highlight text in results
+  const Highlight = ({ text }: { text: string }) => {
+    if (!searchTerm) return <span>{text}</span>
+    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+    return (
+      <span>
+        {parts.map((part, i) => 
+          part.toLowerCase() === searchTerm.toLowerCase() ? <span key={i} className="highlight-text">{part}</span> : part
+        )}
+      </span>
+    )
+  }
+
+  return (
+    <>
+      {isSignupOpen ? (
+        <SignupScreen
+          values={signupValues}
+          isSubmitting={signupSubmitting}
+          isPasswordMismatch={isPasswordMismatch}
+          onChange={updateValue}
+          onSubmit={handleSignupSubmit}
+          onBackToLogin={() => openLogin()}
+          onNavigate={handleSignupNavigate}
+        />
+      ) : (
+        <div className="library-screen">
+          <NavigationBar onLoginClick={() => openLogin()} onNavigate={onNavigate} currentPage="home" />
+          
+          {/* --- MAIN INTERFACE SWITCH --- */}
+          {!hasSearched ? (
+            // --- HOME INTERFACE (Original) ---
+            <main className="library-screen__content">
+              <LibraryHero />
+              <section className="library-screen__search">
+                <SearchForm
+                  catalogOptions={catalogOptions}
+                  libraryOptions={libraryOptions}
+                  selectedCatalog={selectedCatalog}
+                  onCatalogChange={setSelectedCatalog}
+                  searchTerm={searchTerm}
+                  onSearchTermChange={setSearchTerm}
+                  selectedLibrary={selectedLibrary}
+                  onLibraryChange={setSelectedLibrary}
+                  onSubmit={handleSubmit}
+                />
+                <div className="library-screen__meta-links">
+                  <a href="#">Advanced search</a>
+                  <span aria-hidden="true">|</span>
+                  <a href="#">Authority search</a>
+                  <span aria-hidden="true">|</span>
+                  <a href="#">Tag Cloud</a>
+                  <span aria-hidden="true">|</span>
+                  <a href="#">Libraries</a>
+                </div>
+              </section>
+              <section className="library-screen__acquisitions">
+                <h2>New Acquisitions</h2>
+                {isLoadingAcquisitions ? (
+                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Loading new acquisitions...</p>
+                ) : newAcquisitions.length > 0 ? (
+                  <div className="acquisitions-slideshow">
+                    <div className="acquisitions-slideshow__container">
+                      <button 
+                        className="acquisitions-arrow acquisitions-arrow--left"
+                        onClick={goToPreviousSlide}
+                        aria-label="Previous book"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m15 18-6-6 6-6"></path>
+                        </svg>
+                      </button>
+                      {newAcquisitions.map((book, index) => (
+                        <div
+                          key={book.key}
+                          className={`acquisitions-slide ${index === currentSlide ? 'active' : ''}`}
+                        >
+                          <div className="acquisitions-book">
+                            {book.cover_i ? (
+                              <img
+                                src={`https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`}
+                                alt={book.title}
+                                className="acquisitions-book__cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = '/assets/images/assumption-logo.png'
+                                }}
+                              />
+                            ) : (
+                              <div className="acquisitions-book__cover-placeholder">
+                                <span>No Cover</span>
+                              </div>
+                            )}
+                            <div className="acquisitions-book__info">
+                              <h3 className="acquisitions-book__title">{book.title}</h3>
+                              {book.author_name && book.author_name.length > 0 && (
+                                <p className="acquisitions-book__author">by {book.author_name[0]}</p>
+                              )}
+                              {book.first_publish_year && (
+                                <p className="acquisitions-book__year">{book.first_publish_year}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <button 
+                        className="acquisitions-arrow acquisitions-arrow--right"
+                        onClick={goToNextSlide}
+                        aria-label="Next book"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m9 18 6-6-6-6"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>No new acquisitions available at this time.</p>
+                )}
+              </section>
+            </main>
+          ) : (
+            // --- RESULTS INTERFACE (New) ---
+            <>
+              <div className="results-hero-compact">
+                <div className="compact-branding">
+                  <CrestLogo size={70} />
+                  <div className="compact-titles">
+                    <h1>Assumption Iloilo</h1>
+                    <p>18 General Luna St., Iloilo City 5000</p>
+                  </div>
+                </div>
+                {/* Use Compact Form for follow-up searches */}
+                <CompactSearchForm 
+                  initialQuery={searchTerm}
+                  onSearch={searchBooks}
+                />
+              </div>
+
+              <div className="library-content-results">
+                <aside className="sidebar">
+                  <div className="sidebar-header">Refine your search</div>
+                  <div className="sidebar-body">
+                    <div className="filter-group">
+                      <div className="filter-title">Availability</div>
+                      <span className="filter-item">Limit to records with available items</span>
+                    </div>
+                    <div className="filter-group">
+                      <div className="filter-title">Authors</div>
+                      <span className="filter-item">Rowling, J.K.</span>
+                      <span className="filter-item">Colbert, David</span>
+                      <span className="filter-item">Thorne, Jack</span>
+                      <span className="filter-item more">Show more</span>
+                    </div>
+                    <div className="filter-group">
+                      <div className="filter-title">Holding libraries</div>
+                      <span className="filter-item">Grade School Library</span>
+                      <span className="filter-item">High School Library</span>
+                    </div>
+                    <div className="filter-group">
+                      <div className="filter-title">Location</div>
+                      <span className="filter-item">Circulation</span>
+                      <span className="filter-item">Fiction</span>
+                      <span className="filter-item">Reference</span>
+                    </div>
+                  </div>
+                </aside>
+
+                <div className="results-area">
+                  <div className="results-header">
+                    <div className="results-count">
+                      Your search returned {books.length} results
+                    </div>
+                    <div className="results-toolbar">
+                      <span style={{fontWeight:'700', fontSize:'0.9rem', color:'#000'}}>⚡ Unhighlight</span>
+                      <div style={{ flexGrow: 1 }}></div>
+                      <button className="toolbar-btn">Select all</button>
+                      <button className="toolbar-btn">Clear all</button>
+                      <select className="toolbar-select">
+                        <option>Relevance</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {loading ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>Loading catalog...</div>
+                  ) : (
+                    books.map((book, index) => (
+                      <div key={book.id} className="book-card">
+                        <div className="book-check">
+                          <input type="checkbox" />
+                        </div>
+                        <div className="book-info">
+                          <div className="book-title-row">
+                            <span className="book-index">{index + 1}.</span>
+                            <a 
+                              href="#"
+                              className="book-title"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                if (onBookSelect) {
+                                  onBookSelect(book, searchTerm || '')
+                                }
+                              }}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <Highlight text={book.title} />
+                            </a>
+                          </div>
+                          <div className="book-meta">
+                            <strong>by</strong> {book.authors.join(', ')}
+                          </div>
+                          <div className="book-meta">
+                            <strong>Publisher:</strong> {book.publisher}; {book.publishedDate}
+                          </div>
+                          <div className="book-availability">
+                            <span className="avail-label">Availability: </span>
+                            <span className="avail-val">Items available for loan: {book.availability}</span>
+                          </div>
+                          <div className="book-rating">
+                            {[1,2,3,4,5].map(i => (
+                              <Star key={i} size={14} fill={i <= book.rating ? "#aaa" : "#ddd"} stroke="none" />
+                            ))}
+                          </div>
+                          <div className="book-actions">
+                            <button className="action-link">
+                              <Bookmark size={16} /> Place hold
+                            </button>
+                            <button className="action-link">
+                              <ShoppingCart size={16} /> Add to cart
+                            </button>
+                          </div>
+                        </div>
+                        <img src={book.thumbnail} alt={book.title} className="book-cover-img" />
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+      <LoginModal
+        isOpen={isLoginOpen}
+        account={account}
+        password={password}
+        isSubmitting={isSubmitting}
+        onAccountChange={handleAccountChange}
+        onPasswordChange={handlePasswordChange}
+        onClose={closeLogin}
+        onSubmit={handleLoginSubmit}
+        onCreateAccount={openSignup}
+      />
+    </>
+  )
+}
 
 // --- RESULTS INTERFACE CSS ---
 const RESULTS_CSS = `
@@ -534,456 +1000,4 @@ const RESULTS_CSS = `
   }
 }
 `
-
-type LibraryScreenProps = {
-  onNavigate: (page: string) => void
-}
-
-const LibraryScreen = ({ onNavigate }: LibraryScreenProps) => {
-  // Inject Results CSS (Home CSS is likely global or in components)
-  useEffect(() => {
-    if (!document.getElementById('library-results-css')) {
-      const style = document.createElement('style')
-      style.id = 'library-results-css'
-      style.textContent = RESULTS_CSS
-      document.head.appendChild(style)
-    }
-  }, [])
-
-  const {
-    catalogOptions,
-    libraryOptions,
-    selectedCatalog,
-    setSelectedCatalog,
-    searchTerm,
-    setSearchTerm,
-    selectedLibrary,
-    setSelectedLibrary,
-    handleSubmit,
-    // API Data & State
-    books,
-    loading,
-    hasSearched,
-    searchBooks
-  } = useLibrarySearch()
-
-  const {
-    isLoginOpen,
-    isSignupOpen,
-    account,
-    password,
-    isSubmitting,
-    openLogin,
-    closeLogin,
-    openSignup,
-    closeSignup,
-    handleAccountChange,
-    handlePasswordChange,
-    handleLoginSubmit,
-  } = useLoginModal()
-
-  const {
-    values: signupValues,
-    isSubmitting: signupSubmitting,
-    isPasswordMismatch,
-    updateValue,
-    submitForm: submitSignup,
-    resetForm,
-  } = useSignupForm()
-
-  // New Acquisitions state
-  const [newAcquisitions, setNewAcquisitions] = useState<OpenLibraryBook[]>([])
-  const [isLoadingAcquisitions, setIsLoadingAcquisitions] = useState(false)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const slideIntervalRef = useRef<number | null>(null)
-
-  const handleSignupClose = () => {
-    closeSignup()
-    resetForm()
-  }
-
-  const handleSignupSubmit = async () => {
-    await submitSignup()
-    handleSignupClose()
-    openLogin()
-  }
-
-  useEffect(() => {
-    if (isLoginOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isLoginOpen])
-
-  useEffect(() => {
-    const checkAndOpenSignup = () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      if (urlParams.get('signup') === 'true') {
-        openSignup()
-        urlParams.delete('signup')
-        const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash
-        window.history.replaceState({}, '', newUrl)
-      }
-    }
-    checkAndOpenSignup()
-    const handleHashChange = () => {
-      checkAndOpenSignup()
-    }
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [openSignup])
-
-  // Fetch newest books from OpenLibrary
-  useEffect(() => {
-    const fetchNewAcquisitions = async () => {
-      if (searchTerm) {
-        setIsLoadingAcquisitions(false)
-        setNewAcquisitions([])
-        return
-      }
-
-      setIsLoadingAcquisitions(true)
-      try {
-        // Use a simpler query - search for popular books
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
-        
-        const response = await fetch(
-          `https://openlibrary.org/search.json?q=subject:fiction&limit=100&fields=key,title,author_name,first_publish_year,cover_i,isbn`,
-          { signal: controller.signal }
-        )
-        
-        clearTimeout(timeoutId)
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        
-        if (data.docs && data.docs.length > 0) {
-          // Filter to get books with covers, sort by year (newest first), and limit to 7
-          const allBooksWithCovers = data.docs
-            .filter((book: OpenLibraryBook) => book.cover_i && book.title)
-            .sort((a: OpenLibraryBook, b: OpenLibraryBook) => 
-              (b.first_publish_year || 0) - (a.first_publish_year || 0)
-            )
-            .slice(0, 7)
-          
-          setNewAcquisitions(allBooksWithCovers)
-          setIsLoadingAcquisitions(false)
-        } else {
-          setNewAcquisitions([])
-          setIsLoadingAcquisitions(false)
-        }
-      } catch (error: any) {
-        if (error.name === 'AbortError') {
-          console.error('Request timeout')
-        } else {
-          console.error('Error fetching new acquisitions:', error)
-        }
-        setNewAcquisitions([])
-        setIsLoadingAcquisitions(false)
-      }
-    }
-
-    fetchNewAcquisitions()
-  }, [searchTerm])
-
-  // Auto-rotate slideshow
-  useEffect(() => {
-    if (newAcquisitions.length > 0 && !searchTerm) {
-      slideIntervalRef.current = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
-      }, 4000) // Change slide every 4 seconds
-    }
-
-    return () => {
-      if (slideIntervalRef.current) {
-        clearInterval(slideIntervalRef.current)
-      }
-    }
-  }, [newAcquisitions.length, searchTerm])
-
-  const goToNextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
-    // Reset the auto-rotate timer when manually navigating
-    if (slideIntervalRef.current) {
-      clearInterval(slideIntervalRef.current)
-    }
-    slideIntervalRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
-    }, 4000)
-  }
-
-  const goToPreviousSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + newAcquisitions.length) % newAcquisitions.length)
-    // Reset the auto-rotate timer when manually navigating
-    if (slideIntervalRef.current) {
-      clearInterval(slideIntervalRef.current)
-    }
-    slideIntervalRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % newAcquisitions.length)
-    }, 4000)
-  }
-
-  const handleSignupNavigate = (page: string) => {
-    if (page === 'home') {
-      closeSignup()
-      resetForm()
-    }
-    onNavigate(page)
-  }
-
-  // Helper to highlight text in results
-  const Highlight = ({ text }: { text: string }) => {
-    if (!searchTerm) return <span>{text}</span>
-    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
-    return (
-      <span>
-        {parts.map((part, i) => 
-          part.toLowerCase() === searchTerm.toLowerCase() ? <span key={i} className="highlight-text">{part}</span> : part
-        )}
-      </span>
-    )
-  }
-
-  return (
-    <>
-      {isSignupOpen ? (
-        <SignupScreen
-          values={signupValues}
-          isSubmitting={signupSubmitting}
-          isPasswordMismatch={isPasswordMismatch}
-          onChange={updateValue}
-          onSubmit={handleSignupSubmit}
-          onBackToLogin={() => openLogin()}
-          onNavigate={handleSignupNavigate}
-        />
-      ) : (
-        <div className="library-screen">
-          <NavigationBar onLoginClick={() => openLogin()} onNavigate={onNavigate} currentPage="home" />
-          
-          {/* --- MAIN INTERFACE SWITCH --- */}
-          {!hasSearched ? (
-            // --- HOME INTERFACE (Original) ---
-            <main className="library-screen__content">
-              <LibraryHero />
-              <section className="library-screen__search">
-                <SearchForm
-                  catalogOptions={catalogOptions}
-                  libraryOptions={libraryOptions}
-                  selectedCatalog={selectedCatalog}
-                  onCatalogChange={setSelectedCatalog}
-                  searchTerm={searchTerm}
-                  onSearchTermChange={setSearchTerm}
-                  selectedLibrary={selectedLibrary}
-                  onLibraryChange={setSelectedLibrary}
-                  onSubmit={handleSubmit}
-                />
-                <div className="library-screen__meta-links">
-                  <a href="#">Advanced search</a>
-                  <span aria-hidden="true">|</span>
-                  <a href="#">Authority search</a>
-                  <span aria-hidden="true">|</span>
-                  <a href="#">Tag Cloud</a>
-                  <span aria-hidden="true">|</span>
-                  <a href="#">Libraries</a>
-                </div>
-              </section>
-              <section className="library-screen__acquisitions">
-                <h2>New Acquisitions</h2>
-                {isLoadingAcquisitions ? (
-                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Loading new acquisitions...</p>
-                ) : newAcquisitions.length > 0 ? (
-                  <div className="acquisitions-slideshow">
-                    <div className="acquisitions-slideshow__container">
-                      <button 
-                        className="acquisitions-arrow acquisitions-arrow--left"
-                        onClick={goToPreviousSlide}
-                        aria-label="Previous book"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m15 18-6-6 6-6"></path>
-                        </svg>
-                      </button>
-                      {newAcquisitions.map((book, index) => (
-                        <div
-                          key={book.key}
-                          className={`acquisitions-slide ${index === currentSlide ? 'active' : ''}`}
-                        >
-                          <div className="acquisitions-book">
-                            {book.cover_i ? (
-                              <img
-                                src={`https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`}
-                                alt={book.title}
-                                className="acquisitions-book__cover"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = '/assets/images/assumption-logo.png'
-                                }}
-                              />
-                            ) : (
-                              <div className="acquisitions-book__cover-placeholder">
-                                <span>No Cover</span>
-                              </div>
-                            )}
-                            <div className="acquisitions-book__info">
-                              <h3 className="acquisitions-book__title">{book.title}</h3>
-                              {book.author_name && book.author_name.length > 0 && (
-                                <p className="acquisitions-book__author">by {book.author_name[0]}</p>
-                              )}
-                              {book.first_publish_year && (
-                                <p className="acquisitions-book__year">{book.first_publish_year}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      <button 
-                        className="acquisitions-arrow acquisitions-arrow--right"
-                        onClick={goToNextSlide}
-                        aria-label="Next book"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m9 18 6-6-6-6"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>No new acquisitions available at this time.</p>
-                )}
-              </section>
-            </main>
-          ) : (
-            // --- RESULTS INTERFACE (New) ---
-            <>
-              <div className="results-hero-compact">
-                <div className="compact-branding">
-                  <CrestLogo size={70} />
-                  <div className="compact-titles">
-                    <h1>Assumption Iloilo</h1>
-                    <p>18 General Luna St., Iloilo City 5000</p>
-                  </div>
-                </div>
-                {/* Use Compact Form for follow-up searches */}
-                <CompactSearchForm 
-                  initialQuery={searchTerm}
-                  onSearch={searchBooks}
-                />
-              </div>
-
-              <div className="library-content-results">
-                <aside className="sidebar">
-                  <div className="sidebar-header">Refine your search</div>
-                  <div className="sidebar-body">
-                    <div className="filter-group">
-                      <div className="filter-title">Availability</div>
-                      <span className="filter-item">Limit to records with available items</span>
-                    </div>
-                    <div className="filter-group">
-                      <div className="filter-title">Authors</div>
-                      <span className="filter-item">Rowling, J.K.</span>
-                      <span className="filter-item">Colbert, David</span>
-                      <span className="filter-item">Thorne, Jack</span>
-                      <span className="filter-item more">Show more</span>
-                    </div>
-                    <div className="filter-group">
-                      <div className="filter-title">Holding libraries</div>
-                      <span className="filter-item">Grade School Library</span>
-                      <span className="filter-item">High School Library</span>
-                    </div>
-                    <div className="filter-group">
-                      <div className="filter-title">Location</div>
-                      <span className="filter-item">Circulation</span>
-                      <span className="filter-item">Fiction</span>
-                      <span className="filter-item">Reference</span>
-                    </div>
-                  </div>
-                </aside>
-
-                <div className="results-area">
-                  <div className="results-header">
-                    <div className="results-count">
-                      Your search returned {books.length} results
-                    </div>
-                    <div className="results-toolbar">
-                      <span style={{fontWeight:'700', fontSize:'0.9rem', color:'#000'}}>⚡ Unhighlight</span>
-                      <div style={{ flexGrow: 1 }}></div>
-                      <button className="toolbar-btn">Select all</button>
-                      <button className="toolbar-btn">Clear all</button>
-                      <select className="toolbar-select">
-                        <option>Relevance</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {loading ? (
-                    <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>Loading catalog...</div>
-                  ) : (
-                    books.map((book, index) => (
-                      <div key={book.id} className="book-card">
-                        <div className="book-check">
-                          <input type="checkbox" />
-                        </div>
-                        <div className="book-info">
-                          <div className="book-title-row">
-                            <span className="book-index">{index + 1}.</span>
-                            <a href="#" className="book-title">
-                              <Highlight text={book.title} />
-                            </a>
-                          </div>
-                          <div className="book-meta">
-                            <strong>by</strong> {book.authors.join(', ')}
-                          </div>
-                          <div className="book-meta">
-                            <strong>Publisher:</strong> {book.publisher}; {book.publishedDate}
-                          </div>
-                          <div className="book-availability">
-                            <span className="avail-label">Availability: </span>
-                            <span className="avail-val">Items available for loan: {book.availability}</span>
-                          </div>
-                          <div className="book-rating">
-                            {[1,2,3,4,5].map(i => (
-                              <Star key={i} size={14} fill={i <= book.rating ? "#aaa" : "#ddd"} stroke="none" />
-                            ))}
-                          </div>
-                          <div className="book-actions">
-                            <button className="action-link">
-                              <Bookmark size={16} /> Place hold
-                            </button>
-                            <button className="action-link">
-                              <ShoppingCart size={16} /> Add to cart
-                            </button>
-                          </div>
-                        </div>
-                        <img src={book.thumbnail} alt={book.title} className="book-cover-img" />
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-      <LoginModal
-        isOpen={isLoginOpen}
-        account={account}
-        password={password}
-        isSubmitting={isSubmitting}
-        onAccountChange={handleAccountChange}
-        onPasswordChange={handlePasswordChange}
-        onClose={closeLogin}
-        onSubmit={handleLoginSubmit}
-        onCreateAccount={openSignup}
-      />
-    </>
-  )
-}
-
 export default LibraryScreen

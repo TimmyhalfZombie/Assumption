@@ -4,6 +4,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from './firebase'
 
 import LibraryScreen from './screens/LibraryScreen'
+import BookDetailScreen from './screens/BookDetailScreen'
 import AboutUsScreen from './screens/AboutUsScreen'
 import AdmissionScreen from './screens/AdmissionScreen'
 import AcademicScreen from './screens/AcademicScreen'
@@ -13,6 +14,7 @@ import ContactUsScreen from './screens/ContactUsScreen'
 import SignupScreen from './screens/components/SignupScreen'
 import { useSignupForm } from './screens/functions/useSignupForm'
 import { useLoginModal } from './screens/functions/useLoginModal'
+import type { Book } from './screens/functions/useLibrarySearch'
 
 const App = () => {
   // Get initial route from URL hash, default to 'home'
@@ -23,6 +25,8 @@ const App = () => {
   }
 
   const [currentRoute, setCurrentRoute] = useState(getRouteFromHash)
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
+  const [lastSearchQuery, setLastSearchQuery] = useState<string>('')
 
   // --- SECURITY LISTENER (Added) ---
   useEffect(() => {
@@ -79,6 +83,28 @@ const App = () => {
   const handleNavigate = (route: string) => {
     setCurrentRoute(route)
     window.location.hash = route
+    // Clear selected book when navigating away from home
+    if (route !== 'home') {
+      setSelectedBook(null)
+    }
+  }
+
+  // Handle book selection from LibraryScreen
+  const handleBookSelect = (book: Book, searchQuery: string) => {
+    console.log('App: handleBookSelect called with book:', book)
+    setSelectedBook(book)
+    setLastSearchQuery(searchQuery)
+  }
+
+  // Handle back from BookDetailScreen
+  const handleBackFromBookDetail = () => {
+    setSelectedBook(null)
+  }
+
+  // Handle search from BookDetailScreen
+  const handleSearchFromBookDetail = (query: string) => {
+    setSelectedBook(null)
+    setLastSearchQuery(query)
   }
 
   if (currentRoute === 'about') {
@@ -109,7 +135,27 @@ const App = () => {
     return <SignupPageWrapper onNavigate={handleNavigate} />
   }
 
-  return <LibraryScreen onNavigate={handleNavigate} />
+  // Show BookDetailScreen if a book is selected (only on home route)
+  if (currentRoute === 'home' && selectedBook) {
+    console.log('App: Rendering BookDetailScreen')
+    return (
+      <BookDetailScreen
+        book={selectedBook}
+        onNavigate={handleNavigate}
+        onBack={handleBackFromBookDetail}
+        onSearch={handleSearchFromBookDetail}
+        searchQuery={lastSearchQuery}
+      />
+    )
+  }
+
+  return (
+    <LibraryScreen 
+      onNavigate={handleNavigate}
+      onBookSelect={handleBookSelect}
+      initialSearchQuery={lastSearchQuery}
+    />
+  )
 }
 
 // Wrapper component for SignupPage that handles all the form logic
