@@ -101,6 +101,14 @@ const CSS = `
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .school-map-wrapper {
+    min-height: 480px;
+    max-height: 480px;
+  }
+}
+
 @media (min-width: 768px) {
   .school-map-wrapper {
     min-height: 450px;

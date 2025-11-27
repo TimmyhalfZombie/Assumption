@@ -5,9 +5,10 @@ import LoginModal from './components/LoginModal'
 
 type AboutUsScreenProps = {
   onNavigate: (page: string) => void
+  onProfileClick?: () => void
 }
 
-const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
+const AboutUsScreen = ({ onNavigate, onProfileClick }: AboutUsScreenProps) => {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const AboutUsScreen = ({ onNavigate }: AboutUsScreenProps) => {
 
   return (
     <div className="about-us-screen">
-      <NavigationBar onLoginClick={handleLoginClick} onNavigate={onNavigate} currentPage="about" />
+      <NavigationBar onLoginClick={handleLoginClick} onProfileClick={onProfileClick} onNavigate={onNavigate} currentPage="about" />
       <main className="about-us-content">
         <div className="about-us-hero">
           <div className="about-us-hero__overlay"></div>
@@ -764,6 +765,41 @@ const CSS = `
 
 .about-us-mission__link-text:hover {
   color: #f3d654;
+}
+
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .about-us-hero {
+    height: 400px;
+  }
+
+  .about-us-content {
+    padding: 2rem 2.5rem;
+  }
+
+  .about-us-foundation__content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .about-us-vmo {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .about-us-values {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .about-us-video__content {
+    max-width: 800px;
+  }
+
+  .about-us-history__title {
+    font-size: 2rem;
+  }
 }
 
 /* Desktop Styles */

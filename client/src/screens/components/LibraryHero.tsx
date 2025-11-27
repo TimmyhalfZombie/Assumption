@@ -48,6 +48,23 @@ const CSS = `
   font-family: var(--font-afacad);
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .library-hero {
+    padding: 3rem 2rem;
+  }
+
+  .library-hero__title {
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+  }
+
+  .library-hero__callout {
+    font-size: 0.95rem;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
 @media (max-width: 640px) {
   .library-hero__title {
     font-size: 1.1rem;

@@ -84,6 +84,37 @@ const RESULTS_CSS = `
   min-height: calc(100vh - 200px);
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .library-content-results {
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .sidebar {
+    padding: 1.25rem;
+  }
+
+  .book-card {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .book-cover-img {
+    width: 80px;
+    height: 120px;
+  }
+
+  .book-title {
+    font-size: 1rem;
+  }
+
+  .book-meta {
+    font-size: 0.85rem;
+  }
+}
+
 @media (max-width: 768px) {
   .library-content-results {
     grid-template-columns: 1fr;

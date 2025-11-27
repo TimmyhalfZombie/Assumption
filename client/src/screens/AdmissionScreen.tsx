@@ -100,10 +100,11 @@ const ADMISSIONS_CONTENT = {
 
 type AdmissionsScreenProps = {
   onNavigate: (page: string) => void
+  onProfileClick?: () => void
 }
 
 // --- 3. MAIN COMPONENT ---
-const AdmissionsScreen = ({ onNavigate }: AdmissionsScreenProps) => {
+const AdmissionsScreen = ({ onNavigate, onProfileClick }: AdmissionsScreenProps) => {
   useEffect(() => {
     const styleId = 'admissions-screen-styles'
     if (!document.getElementById(styleId)) {
@@ -132,6 +133,7 @@ const AdmissionsScreen = ({ onNavigate }: AdmissionsScreenProps) => {
     <div className="admissions-screen">
       <NavigationBar 
         onLoginClick={openLogin} 
+        onProfileClick={onProfileClick}
         onNavigate={onNavigate} 
         currentPage="admissions" 
       />
@@ -337,6 +339,27 @@ const CSS = `
   display: grid;
   grid-template-columns: 1fr;
   gap: 4rem;
+}
+
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .admissions-content {
+    padding: 2rem 2.5rem;
+  }
+
+  .admissions-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .enrollment-panel {
+    padding: 2rem;
+  }
+
+  .admissions-main-title,
+  .enrollment-title {
+    font-size: 2rem;
+  }
 }
 
 @media (min-width: 1024px) {

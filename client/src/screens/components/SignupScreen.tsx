@@ -234,6 +234,33 @@ const CSS = `
   flex-shrink: 0;
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .signup-container {
+    padding: 2rem 2.5rem;
+  }
+
+  .signup-section__grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .signup-section__grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .signup-actions {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .signup-actions__primary,
+  .signup-actions__secondary {
+    flex: 1;
+  }
+}
+
 @media (max-width: 900px) {
   .signup-section__grid--three {
     grid-template-columns: repeat(2, minmax(0, 1fr));

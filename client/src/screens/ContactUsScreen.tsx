@@ -60,9 +60,10 @@ const CONTACT_CONTENT = {
 
 type ContactUsScreenProps = {
   onNavigate: (page: string) => void
+  onProfileClick?: () => void
 }
 
-const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
+const ContactUsScreen = ({ onNavigate, onProfileClick }: ContactUsScreenProps) => {
   const [isMapFullscreen, setIsMapFullscreen] = useState(false)
 
   useEffect(() => {
@@ -102,8 +103,9 @@ const ContactUsScreen = ({ onNavigate }: ContactUsScreenProps) => {
     <div className="contact-screen">
       <NavigationBar 
         onLoginClick={openLogin} 
+        onProfileClick={onProfileClick}
         onNavigate={onNavigate} 
-        currentPage="contact" 
+        currentPage="contact"
       />
       
       <header className="contact-hero">
@@ -332,6 +334,32 @@ const CSS = `
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
+}
+
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .contact-content {
+    padding: 2rem 2.5rem;
+  }
+
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .map-wrapper {
+    width: 100%;
+    height: 450px;
+    margin-top: 2rem;
+  }
+
+  .contact-info-section {
+    padding: 1.5rem;
+  }
+
+  .contact-info-item {
+    padding: 1rem;
+  }
 }
 
 @media (min-width: 1024px) {

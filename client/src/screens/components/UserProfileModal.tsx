@@ -276,6 +276,40 @@ const CSS = `
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .profile-modal {
+    max-width: 600px;
+    width: 90%;
+  }
+
+  .profile-header {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .profile-content {
+    padding: 1.25rem;
+  }
+
+  .accordion-header {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .list-item {
+    padding: 0.875rem;
+    font-size: 0.9rem;
+  }
+
+  .item-title {
+    font-size: 0.95rem;
+  }
+
+  .item-author {
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 768px) {
   .profile-modal {
     max-width: 100%;

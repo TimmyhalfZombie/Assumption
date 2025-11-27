@@ -117,6 +117,30 @@ const CSS = `
   background: #e1b622;
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .search-form__fieldset {
+    flex-wrap: wrap;
+    border-radius: 22px;
+    gap: 0.85rem;
+    padding: 1.25rem;
+  }
+
+  .search-form__control {
+    flex: 1 1 calc(50% - 0.425rem);
+  }
+
+  .search-form__control--catalog {
+    flex-basis: 100%;
+  }
+
+  .search-form__library-group {
+    flex: 1 1 100%;
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+}
+
 @media (max-width: 1024px) {
   .search-form__fieldset {
     flex-wrap: wrap;

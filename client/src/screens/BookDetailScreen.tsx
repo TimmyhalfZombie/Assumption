@@ -593,6 +593,46 @@ const CSS = `
   margin-bottom: 1rem;
 }
 
+/* --- TABLET --- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .detail-container {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+
+  .detail-content {
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+  }
+
+  .actions-sidebar {
+    order: 0;
+  }
+
+  .action-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .book-title-large {
+    font-size: 1.75rem;
+  }
+
+  .book-cover-large {
+    max-width: 250px;
+  }
+
+  .holdings-table {
+    font-size: 0.9rem;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: 0.85rem 0.75rem;
+  }
+}
+
 /* --- MOBILE --- */
 @media (max-width: 900px) {
   .detail-container {
@@ -831,6 +871,7 @@ type BookDetailScreenProps = {
   onBack: () => void
   onSearch: (query: string) => void
   searchQuery?: string
+  onProfileClick?: () => void
 }
 
 interface WorkDetails {
@@ -846,7 +887,7 @@ interface Article {
   content: string;
 }
 
-const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = '' }: BookDetailScreenProps) => {
+const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = '', onProfileClick }: BookDetailScreenProps) => {
   const [activeView, setActiveView] = useState<'normal' | 'marc' | 'isbd'>('normal')
   const [activeHoldingsTab, setActiveHoldingsTab] = useState<'holdings' | 'article' | 'notes'>('holdings')
   
@@ -1087,7 +1128,7 @@ const BookDetailScreen = ({ book, onNavigate, onBack, onSearch, searchQuery = ''
 
   return (
     <div className="book-detail-screen">
-      <NavigationBar onLoginClick={openLogin} onNavigate={onNavigate} currentPage="home" />
+      <NavigationBar onLoginClick={openLogin} onProfileClick={onProfileClick} onNavigate={onNavigate} currentPage="home" />
 
       <div className="results-hero-compact">
         <button className="back-button" onClick={onBack}>

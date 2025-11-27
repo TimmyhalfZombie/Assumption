@@ -36,10 +36,11 @@ const PROJECTS_CONTENT = {
 
 type ProjectsScreenProps = {
   onNavigate: (page: string) => void
+  onProfileClick?: () => void
 }
 
 // --- 3. MAIN COMPONENT ---
-const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
+const ProjectsScreen = ({ onNavigate, onProfileClick }: ProjectsScreenProps) => {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
 
   useEffect(() => {
@@ -81,6 +82,7 @@ const ProjectsScreen = ({ onNavigate }: ProjectsScreenProps) => {
     <div className="projects-screen">
       <NavigationBar 
         onLoginClick={openLogin} 
+        onProfileClick={onProfileClick}
         onNavigate={onNavigate} 
         currentPage="academics" 
       />
@@ -362,10 +364,40 @@ const CSS = `
   margin: 0;
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .projects-content {
+    padding: 2rem 2.5rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .levels-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .level-card__image {
+    height: 250px;
+  }
+
+  .projects-section-title {
+    font-size: 2rem;
+  }
+
+  .projects-text,
+  .project-card__desc {
+    font-size: 1.1rem;
+  }
+}
+
 @media (min-width: 1024px) {
   .projects-section-title {
     font-size: 2.5rem;
-}
+  }
 
   .projects-text,
   .project-card__desc {

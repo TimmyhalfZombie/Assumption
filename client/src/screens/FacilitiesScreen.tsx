@@ -66,10 +66,11 @@ const FACILITIES_CONTENT = {
 
 type FacilitiesScreenProps = {
   onNavigate: (page: string) => void
+  onProfileClick?: () => void
 }
 
 // --- 3. MAIN COMPONENT ---
-const FacilitiesScreen = ({ onNavigate }: FacilitiesScreenProps) => {
+const FacilitiesScreen = ({ onNavigate, onProfileClick }: FacilitiesScreenProps) => {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null)
 
   useEffect(() => {
@@ -121,6 +122,7 @@ const FacilitiesScreen = ({ onNavigate }: FacilitiesScreenProps) => {
           setFullscreenImage(null) // Close fullscreen modal when opening login
           openLogin()
         }} 
+        onProfileClick={onProfileClick}
         onNavigate={onNavigate} 
         currentPage="facilities" 
       />
@@ -470,6 +472,33 @@ const CSS = `
   max-height: 90%;
   object-fit: contain;
   cursor: default;
+}
+
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .facilities-content {
+    padding: 2rem 2.5rem;
+  }
+
+  .facilities-hero {
+    height: 400px;
+  }
+
+  .facilities-categories {
+    gap: 2.5rem;
+  }
+
+  .facility-item {
+    padding: 1.5rem;
+  }
+
+  .facility-item__name {
+    font-size: 1.1rem;
+  }
+
+  .facility-item__desc {
+    font-size: 0.95rem;
+  }
 }
 
 @media (max-width: 768px) {

@@ -11,7 +11,7 @@ const CSS = `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: clamp(1rem, 3vw, 2rem);
   background-color: rgba(22, 22, 30, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-family: var(--font-afacad);
@@ -19,12 +19,14 @@ const CSS = `
   top: 0;
   z-index: 1000;
   backdrop-filter: blur(4px);
+  min-width: 0;
 }
 
 .navigation-bar__actions {
   display: flex;
   align-items: center;
   gap: 2rem;
+  flex-shrink: 0;
 }
 
 .navigation-bar__menu-toggle {
@@ -112,6 +114,7 @@ const CSS = `
   margin: 0;
   flex-wrap: wrap;
   font-size: 1.05rem;
+  flex-shrink: 1;
 }
 
 .navigation-bar__link {
@@ -162,7 +165,7 @@ const CSS = `
   font-family: var(--font-afacad);
   white-space: nowrap;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-size: 1.05rem;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
   letter-spacing: 0.08em;
   display: flex;
   align-items: center;
@@ -171,6 +174,10 @@ const CSS = `
   min-height: 44px;
   border: none;
   cursor: pointer;
+  overflow: visible;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  flex-shrink: 0;
 }
 
 .navigation-bar__login--icon {
@@ -203,6 +210,57 @@ const CSS = `
 @media (max-width: 1024px) {
   .navigation-bar__login {
     margin-left: 0;
+    padding: 0.6rem clamp(0.75rem, 2vw, 1.2rem);
+    font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+    letter-spacing: 0.06em;
+  }
+}
+
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .navigation-bar {
+    padding: 1rem clamp(1.5rem, 4vw, 3rem);
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .navigation-bar__brand {
+    min-width: 180px;
+    flex-shrink: 1;
+  }
+
+  .navigation-bar__links {
+    gap: 1rem;
+    font-size: 0.95rem;
+    flex-shrink: 1;
+  }
+
+  .navigation-bar__login {
+    padding: 0.6rem clamp(0.9rem, 2vw, 1.3rem);
+    font-size: clamp(0.85rem, 1.3vw, 0.95rem);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+}
+
+/* Small tablet and large mobile (641px - 900px) */
+@media (min-width: 641px) and (max-width: 900px) {
+  .navigation-bar {
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+  }
+
+  .navigation-bar__brand {
+    min-width: 160px;
+  }
+
+  .navigation-bar__links {
+    gap: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .navigation-bar__login {
+    padding: 0.6rem clamp(0.8rem, 2.5vw, 1.1rem);
+    font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+    letter-spacing: 0.04em;
   }
 }
 

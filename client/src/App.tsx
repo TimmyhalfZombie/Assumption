@@ -12,6 +12,7 @@ import FacilitiesScreen from './screens/FacilitiesScreen'
 import NewsEventsScreen from './screens/NewsEventsScreen'
 import ContactUsScreen from './screens/ContactUsScreen'
 import SignupScreen from './screens/components/SignupScreen'
+import UserProfileModal from './screens/components/UserProfileModal'
 import { useSignupForm } from './screens/functions/useSignupForm'
 import { useLoginModal } from './screens/functions/useLoginModal'
 import type { Book } from './screens/functions/useLibrarySearch'
@@ -28,6 +29,7 @@ const App = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const [lastSearchQuery, setLastSearchQuery] = useState<string>('')
   const [lastSearchBooks, setLastSearchBooks] = useState<Book[]>([])
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
 
   // --- SECURITY LISTENER (Added) ---
   useEffect(() => {
@@ -110,28 +112,67 @@ const App = () => {
     setLastSearchQuery(query)
   }
 
+  // Handle profile modal
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true)
+  }
+
+  const handleProfileModalClose = () => {
+    setIsProfileModalOpen(false)
+  }
+
   if (currentRoute === 'about') {
-    return <AboutUsScreen onNavigate={handleNavigate} />
+    return (
+      <>
+        <AboutUsScreen onNavigate={handleNavigate} onProfileClick={handleProfileClick} />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
+    )
   }
 
   if (currentRoute === 'admissions') {
-    return <AdmissionScreen onNavigate={handleNavigate} />
+    return (
+      <>
+        <AdmissionScreen onNavigate={handleNavigate} onProfileClick={handleProfileClick} />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
+    )
   }
 
   if (currentRoute === 'academics') {
-    return <AcademicScreen onNavigate={handleNavigate} />
+    return (
+      <>
+        <AcademicScreen onNavigate={handleNavigate} onProfileClick={handleProfileClick} />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
+    )
   }
 
   if (currentRoute === 'facilities') {
-    return <FacilitiesScreen onNavigate={handleNavigate} />
+    return (
+      <>
+        <FacilitiesScreen onNavigate={handleNavigate} onProfileClick={handleProfileClick} />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
+    )
   }
 
   if (currentRoute === 'news') {
-    return <NewsEventsScreen onNavigate={handleNavigate} />
+    return (
+      <>
+        <NewsEventsScreen onNavigate={handleNavigate} onProfileClick={handleProfileClick} />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
+    )
   }
 
   if (currentRoute === 'contact') {
-    return <ContactUsScreen onNavigate={handleNavigate} />
+    return (
+      <>
+        <ContactUsScreen onNavigate={handleNavigate} onProfileClick={handleProfileClick} />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
+    )
   }
 
   if (currentRoute === 'signup') {
@@ -142,23 +183,31 @@ const App = () => {
   if (currentRoute === 'home' && selectedBook) {
     console.log('App: Rendering BookDetailScreen')
     return (
-      <BookDetailScreen
-        book={selectedBook}
-        onNavigate={handleNavigate}
-        onBack={handleBackFromBookDetail}
-        onSearch={handleSearchFromBookDetail}
-        searchQuery={lastSearchQuery}
-      />
+      <>
+        <BookDetailScreen
+          book={selectedBook}
+          onNavigate={handleNavigate}
+          onBack={handleBackFromBookDetail}
+          onSearch={handleSearchFromBookDetail}
+          searchQuery={lastSearchQuery}
+          onProfileClick={handleProfileClick}
+        />
+        <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+      </>
     )
   }
 
   return (
-    <LibraryScreen 
-      onNavigate={handleNavigate}
-      onBookSelect={handleBookSelect}
-      initialSearchQuery={lastSearchQuery}
-      initialSearchBooks={lastSearchBooks}
-    />
+    <>
+      <LibraryScreen 
+        onNavigate={handleNavigate}
+        onBookSelect={handleBookSelect}
+        initialSearchQuery={lastSearchQuery}
+        initialSearchBooks={lastSearchBooks}
+        onProfileClick={handleProfileClick}
+      />
+      <UserProfileModal isOpen={isProfileModalOpen} onClose={handleProfileModalClose} />
+    </>
   )
 }
 

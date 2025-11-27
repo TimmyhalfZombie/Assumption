@@ -448,6 +448,34 @@ const CSS = `
   margin-bottom: 1.5rem;
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .news-content {
+    padding: 2rem 2.5rem;
+  }
+
+  .news-hero {
+    height: 400px;
+  }
+
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .news-card {
+    padding: 1.5rem;
+  }
+
+  .news-card__title {
+    font-size: 1.3rem;
+  }
+
+  .news-card__excerpt {
+    font-size: 0.95rem;
+  }
+}
+
 @media (max-width: 768px) {
   .news-hero {
     height: 300px;
@@ -466,10 +494,11 @@ const CSS = `
 
 type NewsEventsScreenProps = {
   onNavigate: (page: string) => void
+  onProfileClick?: () => void
 }
 
 // --- 3. MAIN COMPONENT ---
-const NewsEventsScreen = ({ onNavigate }: NewsEventsScreenProps) => {
+const NewsEventsScreen = ({ onNavigate, onProfileClick }: NewsEventsScreenProps) => {
   // Use a local state to handle the "Read More" navigation
   // If null, show list. If set, show detail.
   const [selectedArticleId, setSelectedArticleId] = useState<number | null>(null)
@@ -508,6 +537,7 @@ const NewsEventsScreen = ({ onNavigate }: NewsEventsScreenProps) => {
     <div className="news-screen">
       <NavigationBar 
         onLoginClick={openLogin} 
+        onProfileClick={onProfileClick}
         onNavigate={(page) => {
           // If navigating away, reset selection
           setSelectedArticleId(null)

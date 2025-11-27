@@ -85,6 +85,27 @@ const CSS = `
   color: #ffffffff;
 }
 
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .compact-search-container {
+    gap: 0.75rem;
+  }
+
+  .compact-dropdown {
+    flex: 0 0 180px;
+  }
+
+  .compact-input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .compact-btn {
+    flex: 0 0 auto;
+    padding: 0 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .compact-search-container {
     flex-direction: column;

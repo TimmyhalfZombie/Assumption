@@ -5,7 +5,6 @@ import LibraryHero from './components/LibraryHero'
 import SearchForm from './components/SearchForm' // Original UI
 import LibraryResultsScreen from './LibraryResultsScreen'
 import LoginModal from './components/LoginModal'
-import UserProfileModal from './components/UserProfileModal'
 import SignupScreen from './components/SignupScreen'
 import { useLibrarySearch } from './functions/useLibrarySearch'
 import type { Book } from './functions/useLibrarySearch'
@@ -28,9 +27,10 @@ type LibraryScreenProps = {
   onBookSelect?: (book: Book, searchQuery: string, searchBooks: Book[]) => void
   initialSearchQuery?: string
   initialSearchBooks?: Book[]
+  onProfileClick?: () => void
 }
 
-const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', initialSearchBooks = [] }: LibraryScreenProps) => {
+const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', initialSearchBooks = [], onProfileClick }: LibraryScreenProps) => {
   // Inject New Acquisitions CSS
   useEffect(() => {
     if (!document.getElementById('acquisitions-slideshow-css')) {
@@ -120,8 +120,6 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
   const [currentSlide, setCurrentSlide] = useState(0)
   const slideIntervalRef = useRef<number | null>(null)
 
-  // Profile Modal state
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
 
   const handleSignupClose = () => {
     closeSignup()
@@ -281,7 +279,7 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
         <div className="library-screen">
           <NavigationBar 
             onLoginClick={() => openLogin()} 
-            onProfileClick={() => setIsProfileModalOpen(true)}
+            onProfileClick={onProfileClick}
             onNavigate={onNavigate} 
             currentPage="home" 
           />
@@ -398,10 +396,6 @@ const LibraryScreen = ({ onNavigate, onBookSelect, initialSearchQuery = '', init
         onClose={closeLogin}
         onSubmit={handleLoginSubmit}
         onCreateAccount={openSignup}
-      />
-      <UserProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
       />
     </>
   )
@@ -572,6 +566,35 @@ const ACQUISITIONS_CSS = `
 
 .acquisitions-indicator.active {
   background: #f3d654;
+}
+
+/* Tablet styles (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .library-screen__content {
+    padding: 2rem clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .acquisitions-book {
+    padding: 1.75rem;
+    gap: 1.5rem;
+  }
+
+  .acquisitions-book__cover {
+    width: 100px;
+    height: 150px;
+  }
+
+  .acquisitions-book__info {
+    gap: 0.75rem;
+  }
+
+  .acquisitions-book__title {
+    font-size: 1.1rem;
+  }
+
+  .acquisitions-book__author {
+    font-size: 0.95rem;
+  }
 }
 
 @media (max-width: 768px) {
