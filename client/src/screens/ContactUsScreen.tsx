@@ -111,7 +111,6 @@ const ContactUsScreen = ({ onNavigate, onProfileClick }: ContactUsScreenProps) =
       <header className="contact-hero">
         <div>
           <h1 className="contact-hero__title">Contact Us</h1>
-          <p className="contact-hero__subtitle">We'd love to hear from you. Get in touch with us.</p>
         </div>
       </header>
       
